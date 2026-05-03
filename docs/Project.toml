@@ -1,0 +1,6 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+StochasticVolatility = "c3f83b8a-3cc9-4a74-b44c-79f892b0a5a4"
+
+[compat]
+Documenter = "1"
