@@ -23,6 +23,15 @@ PseudoRandom
 QuasiRandom
 ```
 
+## Prices
+
+```@docs
+european_price
+monte_carlo_price
+hagan_implied_vol
+hagan_price
+```
+
 ## Price-Based Volatility
 
 ```@docs

@@ -5,6 +5,7 @@ include("RangeBased.jl")
 include("Models.jl")
 include("RandomNumbers.jl")
 include("Simulation.jl")
+include("Pricing.jl")
 
 export Heston,
        Bates,
@@ -17,6 +18,10 @@ export Heston,
        SimulatedPaths,
        simulate,
        simulate_terminal,
+       european_price,
+       monte_carlo_price,
+       hagan_implied_vol,
+       hagan_price,
        bipower_variation,
        realized_variance,
        realized_volatility,

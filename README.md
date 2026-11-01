@@ -9,6 +9,9 @@
 - `simulate_terminal(model, T; ...)` — the terminal prices only
 - `QuadraticExponential()`, `FullTruncation()` — schemes for Heston and Bates; `Euler()` for SABR
 - `PseudoRandom(seed=...)`, `QuasiRandom(seed=..., replicates=...)` — random and quasi-random numbers
+- `european_price(model, K, T; rate, call=true)` — closed-form European prices under Heston and Bates
+- `monte_carlo_price(model, K, T; rate, call=true, paths=65536, steps=252, scheme, numbers, threaded=true)` — Monte Carlo European prices with a standard error under Heston, Bates and SABR, for one strike or a vector of strikes from one simulation
+- `hagan_implied_vol(model, K, T)` and `hagan_price(model, K, T; rate, call=true)` — the approximation of Hagan et al. (2002) under SABR
 
 - `historical_volatility(close; scale=1)` — close-to-close historical volatility estimator
 - `historical_variance(close; scale=1)` — close-to-close historical variance estimator

@@ -2,7 +2,7 @@
 
 julia_version = "1.13.1"
 manifest_format = "2.1"
-project_hash = "47b0b0928b89fe7c0744c21bfed965e42e3dc711"
+project_hash = "8d077c7d7e7799d3055440e229203bafd549ef0f"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "bbc22a9a08a0ef6460041086d8a7b27940ed4ffd"
@@ -103,6 +103,13 @@ version = "1.6.0"
     IntervalSets = "8197267c-284f-5f27-9208-e0e47529a953"
     LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
     StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+
+[[deps.DataStructures]]
+deps = ["OrderedCollections"]
+git-tree-sha1 = "b0bc6d2cad1fed8b7fd59a1551a991cb3d2809e6"
+registries = "General"
+uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
+version = "0.19.6"
 
 [[deps.Dates]]
 deps = ["Printf"]
@@ -350,6 +357,12 @@ version = "2.0.1"
     [deps.Optim.weakdeps]
     MathOptInterface = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
 
+[[deps.OrderedCollections]]
+git-tree-sha1 = "b079a6affebde167dad8ffe0d670b53917fbcb68"
+registries = "General"
+uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
+version = "2.0.3"
+
 [[deps.PositiveFactorizations]]
 deps = ["LinearAlgebra"]
 git-tree-sha1 = "17275485f373e6673f7e7f97051f703ed5b15b20"
@@ -368,6 +381,19 @@ version = "1.5.2"
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 version = "1.11.0"
+
+[[deps.QuadGK]]
+deps = ["DataStructures", "LinearAlgebra"]
+git-tree-sha1 = "5e8e8b0ab68215d7a2b14b9921a946fee794749e"
+registries = "General"
+uuid = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
+version = "2.11.3"
+
+    [deps.QuadGK.extensions]
+    QuadGKEnzymeExt = "Enzyme"
+
+    [deps.QuadGK.weakdeps]
+    Enzyme = "7da242da-08ed-463a-9acd-ee780be4f1d9"
 
 [[deps.Random]]
 deps = ["SHA"]
@@ -439,7 +465,7 @@ weakdeps = ["SparseArrays"]
     SparseArraysExt = ["SparseArrays"]
 
 [[deps.StochasticVolatility]]
-deps = ["ADTypes", "DifferentiationInterface", "ForwardDiff", "Optim", "Random", "Sobol", "SpecialFunctions"]
+deps = ["ADTypes", "DifferentiationInterface", "ForwardDiff", "Optim", "QuadGK", "Random", "Sobol", "SpecialFunctions"]
 path = "."
 uuid = "c3f83b8a-3cc9-4a74-b44c-79f892b0a5a4"
 version = "0.1.0"

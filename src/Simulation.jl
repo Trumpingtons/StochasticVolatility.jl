@@ -83,12 +83,12 @@ function _record!(price::Matrix{Float64}, state::Matrix{Float64}, row::Integer, 
     return nothing
 end
 
-_log_jump(::Heston, c, Z, i) = 0.0
+_log_jump(::Heston, Z, i) = 0.0
 
-function _log_jump(model::Bates, c, Z, i)
-    jumps = _poisson_quantile(_normal_cdf(Z[3, i]), c.jump_rate)
+function _log_jump(model::Bates, Z, i)
+    jumps = Z[3, i]
     jumps == 0 && return 0.0
-    return jumps * model.muJ + sqrt(float(jumps)) * model.deltaJ * Z[4, i]
+    return jumps * model.muJ + sqrt(jumps) * model.deltaJ * Z[4, i]
 end
 
 function _poisson_quantile(u::Real, rate::Real)
@@ -103,11 +103,11 @@ function _poisson_quantile(u::Real, rate::Real)
     return count
 end
 
-_jump_rate(::Heston, ::Real) = 0.0
+_jump_rate(::Union{Heston, SABR}, ::Real) = 0.0
 _jump_rate(model::Bates, dt::Real) = model.lambda * dt
 
 function _coefficients(model::Union{Heston, Bates}, ::FullTruncation, dt::Real)
-    return (; dt, drift = _net_drift(model), rho_complement = sqrt(1 - abs2(_diffusion(model).rho)), jump_rate = _jump_rate(model, dt))
+    return (; dt, drift = _net_drift(model), rho_complement = sqrt(1 - abs2(_diffusion(model).rho)))
 end
 
 function _path!(price, state, column, model::Union{Heston, Bates}, ::FullTruncation, c, Z)
@@ -118,7 +118,7 @@ function _path!(price, state, column, model::Union{Heston, Bates}, ::FullTruncat
     for i in axes(Z, 2)
         positive = max(v, 0.0)
         root = sqrt(positive * c.dt)
-        log_price += (c.drift - positive / 2) * c.dt + root * Z[1, i] + _log_jump(model, c, Z, i)
+        log_price += (c.drift - positive / 2) * c.dt + root * Z[1, i] + _log_jump(model, Z, i)
         v += h.kappa * (h.theta - positive) * c.dt + h.xi * root * (h.rho * Z[1, i] + c.rho_complement * Z[2, i])
         _record!(price, state, i + 1, column, exp(log_price), max(v, 0.0))
     end
@@ -134,7 +134,7 @@ function _coefficients(model::Union{Heston, Bates}, ::QuadraticExponential, dt::
     K2 = slope + h.rho / h.xi
     K3 = dt * (1 - abs2(h.rho)) / 2
     K4 = K3
-    return (; dt, drift = _net_drift(model), decay, K0, K1, K2, K3, K4, A = K2 + K4 / 2, jump_rate = _jump_rate(model, dt))
+    return (; dt, drift = _net_drift(model), decay, K0, K1, K2, K3, K4, A = K2 + K4 / 2)
 end
 
 function _path!(price, state, column, model::Union{Heston, Bates}, scheme::QuadraticExponential, c, Z)
@@ -148,7 +148,7 @@ function _path!(price, state, column, model::Union{Heston, Bates}, scheme::Quadr
         psi = variance_next / abs2(mean_next)
         next, log_moment = _quadratic_exponential(mean_next, psi, Z[2, i], scheme.psi_critical, c.A)
         K0 = (scheme.martingale_correction && isfinite(log_moment)) ? -log_moment - (c.K1 + c.K3 / 2) * v : c.K0
-        log_price += c.drift * c.dt + K0 + c.K1 * v + c.K2 * next + sqrt(c.K3 * v + c.K4 * next) * Z[1, i] + _log_jump(model, c, Z, i)
+        log_price += c.drift * c.dt + K0 + c.K1 * v + c.K2 * next + sqrt(c.K3 * v + c.K4 * next) * Z[1, i] + _log_jump(model, Z, i)
         v = next
         _record!(price, state, i + 1, column, exp(log_price), v)
     end
@@ -191,11 +191,11 @@ function _path!(price, state, column, model::SABR, ::Euler, c, Z)
     return F
 end
 
-function _run_chunk!(terminal, price, state, model, scheme, c, numbers, chunk, factors, steps, bridge)
+function _run_chunk!(terminal, price, state, model, scheme, c, numbers, chunk, factors, steps, bridge, jump_rate)
     Z = Matrix{Float64}(undef, factors, steps)
     source = _source(numbers, chunk, factors, steps, bridge)
     for column in chunk.first_path:chunk.last_path
-        _fill_normals!(Z, source)
+        _fill_normals!(Z, source, jump_rate)
         terminal[column] = _path!(price, state, column, model, scheme, c, Z)
     end
     return nothing
@@ -209,15 +209,16 @@ function _run!(terminal, price, state, model, T, steps, paths, scheme, numbers, 
     factors = _factors(model)
     _validate_numbers(numbers, paths, factors, steps)
     c = _coefficients(model, scheme, T / steps)
+    jump_rate = _jump_rate(model, T / steps)
     bridge = _bridge_for(numbers, steps)
     chunks = _chunks(numbers, paths)
     if threaded
         Threads.@threads for chunk in chunks
-            _run_chunk!(terminal, price, state, model, scheme, c, numbers, chunk, factors, steps, bridge)
+            _run_chunk!(terminal, price, state, model, scheme, c, numbers, chunk, factors, steps, bridge, jump_rate)
         end
     else
         for chunk in chunks
-            _run_chunk!(terminal, price, state, model, scheme, c, numbers, chunk, factors, steps, bridge)
+            _run_chunk!(terminal, price, state, model, scheme, c, numbers, chunk, factors, steps, bridge, jump_rate)
         end
     end
     return nothing

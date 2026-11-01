@@ -1,10 +1,10 @@
 using Test
 using Statistics
-using SpecialFunctions: gamma
+using SpecialFunctions: gamma, loggamma
 using LinearAlgebra: I
 using Random: Xoshiro
 using StochasticVolatility
-using StochasticVolatility: _brownian_bridge, _bridge_increments!, _chunks, _diffusion, _mean_jump, _normal_cdf, _poisson_quantile
+using StochasticVolatility: _binomial_quantile, _black_call, _brownian_bridge, _bridge_increments!, _Chunk, _chunks, _fill_normals!, _source, _diffusion, _mean_jump, _normal_cdf, _poisson_quantile
 
 # How many standard errors a sample mean lies from its exact value.
 zscore(x, exact) = abs(mean(x) - exact) / (std(x) / sqrt(length(x)))
@@ -241,6 +241,27 @@ zscore(x, exact) = abs(mean(x) - exact) / (std(x) / sqrt(length(x)))
             @test _poisson_quantile(0.5, 0.0) == 0
         end
 
+        @testset "Jump bridge" begin
+            @test [_binomial_quantile(u, 4, 0.5) for u in (0.05, 0.0625, 0.5, 0.9, 1.0)] == [0, 0, 2, 3, 4]
+            @test _binomial_quantile(0.5, 0, 0.5) == 0
+
+            # Each step's count is Poisson and independent of the others, and the jump normals standard.
+            paths, steps, rate = 2^14, 8, 0.25
+            Z = Matrix{Float64}(undef, 4, steps)
+            source = _source(QuasiRandom(seed = 61, replicates = 2), _Chunk(1, paths, 1, 0), 4, steps, _brownian_bridge(steps))
+            counts, sizes = Matrix{Float64}(undef, steps, paths), Float64[]
+            for path in 1:paths
+                _fill_normals!(Z, source, rate)
+                counts[:, path] = Z[3, :]
+                append!(sizes, Z[4, Z[3, :] .> 0])
+            end
+            @test all(isapprox.(mean(counts; dims = 2), rate; rtol = 0.02))
+            @test all(isapprox.(var(counts; dims = 2), rate; rtol = 0.05))
+            @test abs(cov(counts[1, :], counts[steps, :])) < 0.01
+            @test isapprox(mean(sizes), 0; atol = 0.02)
+            @test isapprox(var(sizes), 1; rtol = 0.05)
+        end
+
         @testset "Input validation" begin
             @test _diffusion(bates) == heston
             @test_throws DomainError Heston(S0 = 0, v0 = 0.04, mu = 0, kappa = 1, theta = 0.04, xi = 0.3, rho = 0)
@@ -256,6 +277,149 @@ zscore(x, exact) = abs(mean(x) - exact) / (std(x) / sqrt(length(x)))
             @test_throws DomainError QuadraticExponential(psi_critical = 3)
             @test_throws DomainError QuasiRandom(replicates = 1)
         end
+    end
+
+    @testset "Closed-form prices" begin
+        @testset "Heston against the reference values of Alan Lewis, in the QuantLib tests" begin
+            model = Heston(S0 = 100, v0 = 0.04, mu = -0.01, kappa = 4, theta = 0.25, xi = 1, rho = -0.5)
+            @testset "K = $K" for (K, put, call) in (
+                (80, 7.958878113256768, 26.774758743998854),
+                (90, 12.017966707346305, 20.933349000596710),
+                (100, 17.055270961270109, 16.070154917028834),
+                (110, 23.017825898442801, 12.132211516709845),
+                (120, 29.811026202682472, 9.024913483457836),
+            )
+                @test isapprox(european_price(model, K, 1.0; rate = 0.01), call; rtol = 1e-12)
+                @test isapprox(european_price(model, K, 1.0; rate = 0.01, call = false), put; rtol = 1e-12)
+            end
+        end
+
+        @testset "Heston against the other values in the QuantLib tests" begin
+            kahl_jaeckel = Heston(S0 = 100, v0 = 0.16, mu = 0, kappa = 1, theta = 0.16, xi = 2, rho = -0.8)
+            @test isapprox(european_price(kahl_jaeckel, 200, 10.0; rate = 0), 4.95212; atol = 2e-5)
+            model = Heston(S0 = 100, v0 = 0.1, mu = -0.025, kappa = 4, theta = 0.05, xi = 0.4, rho = -0.75)
+            @test isapprox(european_price(model, 100, 1.0; rate = 0.05, call = false), 10.147041515497; atol = 1e-8)
+        end
+
+        @testset "Bates without jumps is Heston" begin
+            heston = Heston(S0 = 100, v0 = 0.09, mu = 0.03, kappa = 1.5, theta = 0.04, xi = 0.8, rho = -0.7)
+            @test european_price(Bates(heston, 0, -0.1, 0.2), 100, 2.0; rate = 0.03) == european_price(heston, 100, 2.0; rate = 0.03)
+        end
+
+        @testset "Bates with almost constant variance is the Merton series, K = $K" for K in (80, 100, 120)
+            S0, variance, mu, lambda, muJ, deltaJ, T, rate = 100.0, 0.04, 0.03, 2.0, -0.2, 0.2, 1.0, 0.05
+            model = Bates(Heston(S0, variance, mu, 2, variance, 1e-4, 0), lambda, muJ, deltaJ)
+            log_moment = muJ + deltaJ^2 / 2
+            series = sum(0:80) do n
+                weight = exp(-lambda * T + n * log(lambda * T) - loggamma(n + 1))
+                F = S0 * exp(mu * T - lambda * expm1(log_moment) * T + n * log_moment)
+                return weight * _black_call(F, K, variance * T + n * deltaJ^2)
+            end
+            @test isapprox(european_price(model, K, T; rate), exp(-rate * T) * series; atol = 1e-8)
+        end
+
+        @testset "Against simulation, K = $K" for K in (80, 100, 120)
+            heston = Heston(S0 = 100, v0 = 0.09, mu = 0.03, kappa = 1.5, theta = 0.04, xi = 0.8, rho = -0.7)
+            @testset "$(nameof(typeof(model)))" for model in (heston, Bates(heston, 0.5, -0.1, 0.2))
+                terminal = simulate_terminal(model, 2.0; paths = 2^18, steps = 200, numbers = PseudoRandom(seed = 41))
+                @test zscore(exp(-0.06) .* max.(terminal .- K, 0), european_price(model, K, 2.0; rate = 0.03)) < 4
+                replicates = 32
+                quasi = simulate_terminal(model, 2.0; paths = replicates * 2^13, steps = 200, numbers = QuasiRandom(seed = 42; replicates))
+                means = [mean(max.(block .- K, 0)) for block in Iterators.partition(quasi, 2^13)]
+                @test zscore(exp(-0.06) .* means, european_price(model, K, 2.0; rate = 0.03)) < 4
+            end
+        end
+
+        @testset "Input validation" begin
+            model = Heston(S0 = 100, v0 = 0.04, mu = 0, kappa = 1, theta = 0.04, xi = 0.3, rho = 0)
+            @test_throws DomainError european_price(model, 0, 1.0; rate = 0)
+            @test_throws DomainError european_price(model, 100, 0.0; rate = 0)
+        end
+    end
+
+    @testset "Monte Carlo prices" begin
+        heston = Heston(S0 = 100, v0 = 0.09, mu = 0.03, kappa = 1.5, theta = 0.04, xi = 0.8, rho = -0.7)
+        bates = Bates(heston, 0.5, -0.1, 0.2)
+        sabr = SABR(100, 0.2, 1.0, -0.3, 0.4)
+        pseudo = PseudoRandom(seed = 51)
+        quasi = QuasiRandom(seed = 52, replicates = 32)
+
+        @testset "Against the closed form, $(nameof(typeof(model))), $(nameof(typeof(numbers)))" for model in (heston, bates), numbers in (pseudo, quasi)
+            @testset "call = $call" for call in (true, false)
+                strikes = [80, 100, 120]
+                results = monte_carlo_price(model, strikes, 2.0; rate = 0.05, call, paths = 2^18, steps = 200, numbers)
+                @test all(abs(result.price - european_price(model, K, 2.0; rate = 0.05, call)) < 4 * result.standard_error for (K, result) in zip(strikes, results))
+            end
+        end
+
+        @testset "SABR with almost constant volatility is Black" begin
+            model = SABR(100, 0.2, 1.0, 0.0, 1e-4)
+            result = monte_carlo_price(model, 110, 1.0; rate = 0.02, paths = 2^18, numbers = pseudo)
+            @test abs(result.price - exp(-0.02) * _black_call(100, 110, 0.04)) < 4 * result.standard_error
+        end
+
+        @testset "Discounted payoffs and standard errors, $(nameof(typeof(model)))" for model in (heston, bates, sabr)
+            paths = 32 * 2^8
+            discount = exp(-0.05 * 2.0)
+            payoffs = discount .* max.(simulate_terminal(model, 2.0; paths, steps = 16, numbers = pseudo) .- 100, 0)
+            result = monte_carlo_price(model, 100, 2.0; rate = 0.05, paths, steps = 16, numbers = pseudo)
+            @test collect(result) ≈ [mean(payoffs), std(payoffs) / sqrt(paths)]
+            payoffs = discount .* max.(simulate_terminal(model, 2.0; paths, steps = 16, numbers = quasi) .- 100, 0)
+            means = [mean(block) for block in Iterators.partition(payoffs, 2^8)]
+            result = monte_carlo_price(model, 100, 2.0; rate = 0.05, paths, steps = 16, numbers = quasi)
+            @test collect(result) ≈ [mean(payoffs), std(means) / sqrt(32)]
+        end
+
+        @testset "Put-call parity on the same paths, $(nameof(typeof(model)))" for model in (heston, bates, sabr)
+            terminal = simulate_terminal(model, 1.0; paths = 2^10, steps = 16, numbers = pseudo)
+            arguments = (; rate = 0.05, paths = 2^10, steps = 16, numbers = pseudo)
+            difference = monte_carlo_price(model, 100, 1.0; arguments...).price - monte_carlo_price(model, 100, 1.0; call = false, arguments...).price
+            @test difference ≈ exp(-0.05) * (mean(terminal) - 100)
+        end
+
+        @testset "Input validation" begin
+            @test_throws DomainError monte_carlo_price(heston, 0, 1.0; rate = 0)
+            @test_throws DomainError monte_carlo_price(heston, 100, 0.0; rate = 0)
+            @test_throws ArgumentError monte_carlo_price(heston, 100, 1.0; rate = 0, paths = 1)
+            @test_throws ArgumentError monte_carlo_price(heston, 100, 1.0; rate = 0, paths = 1000, numbers = quasi)
+        end
+    end
+
+    @testset "Hagan formula against QuantLib" begin
+        rows = [parse.(Float64, split(line)) for line in eachline(joinpath(@__DIR__, "hagan_quantlib.txt")) if !startswith(line, "#")]
+        differences = map(rows) do (F0, alpha, beta, rho, nu, T, K, volatility, call, put)
+            model = SABR(F0, alpha, beta, rho, nu)
+            return (
+                abs(hagan_implied_vol(model, K, T) / volatility - 1),
+                abs(hagan_price(model, K, T; rate = 0.05) - call) / F0,
+                abs(hagan_price(model, K, T; rate = 0.05, call = false) - put) / F0,
+            )
+        end
+        @test maximum(maximum, differences) < 1e-13
+    end
+
+    @testset "Heston against QuantLib and NMOF" begin
+        rows = [parse.(Float64, split(line)) for line in eachline(joinpath(@__DIR__, "heston_references.txt")) if !startswith(line, "#")]
+        differences = map(rows) do (S0, v0, mu, kappa, theta, xi, rho, rate, T, K, quantlib_call, quantlib_put, nmof_call)
+            model = Heston(S0, v0, mu, kappa, theta, xi, rho)
+            call = european_price(model, K, T; rate)
+            return (max(abs(call - quantlib_call), abs(european_price(model, K, T; rate, call = false) - quantlib_put)), abs(call - nmof_call))
+        end
+        @test maximum(first, differences) < 1e-11
+        @test maximum(last, differences) < 2e-6
+    end
+
+    # BatesEngine of QuantLib has not converged at xi of 1 or more, so there only NMOF is the reference.
+    @testset "Bates against QuantLib and NMOF" begin
+        rows = [parse.(Float64, split(line)) for line in eachline(joinpath(@__DIR__, "bates_references.txt")) if !startswith(line, "#")]
+        differences = map(rows) do (S0, v0, mu, kappa, theta, xi, rho, lambda, muJ, deltaJ, rate, T, K, quantlib_call, quantlib_put, nmof_call)
+            model = Bates(Heston(S0, v0, mu, kappa, theta, xi, rho), lambda, muJ, deltaJ)
+            call = european_price(model, K, T; rate)
+            quantlib = xi < 1 ? max(abs(call - quantlib_call), abs(european_price(model, K, T; rate, call = false) - quantlib_put)) : 0.0
+            return (quantlib, abs(call - nmof_call))
+        end
+        @test maximum(first, differences) < 2e-8
+        @test maximum(last, differences) < 2e-6
     end
 
     @testset "Input validation" begin

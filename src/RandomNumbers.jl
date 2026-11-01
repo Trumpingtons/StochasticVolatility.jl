@@ -27,7 +27,12 @@ PseudoRandom(; seed::Integer = rand(UInt64)) = PseudoRandom(UInt64(seed))
 Each replicate is the same Sobol sequence under its own random digital shift, so the
 replicates are independent and the spread of their means gives a standard error. The
 Brownian bridge gives the first coordinates of the sequence, the most evenly spread, to
-the largest moves of the price and of its variance or volatility.
+the largest moves of the price and of its variance or volatility, and under
+[`Bates`](@ref) a bridge of the same order does so for the jumps.
+
+# Reference
+Baldeaux, J. and Roberts, D. (2012). Quasi-Monte Carlo methods for the Heston model.
+arXiv:1202.3217
 
 # Arguments
 - `seed`: an integer, as in [`PseudoRandom`](@ref).
@@ -141,6 +146,7 @@ mutable struct _QuasiSource
     normal::Vector{Float64}
     W::Vector{Float64}
     bridge::_BrownianBridge
+    counts::Vector{Int}
     at_origin::Bool
 end
 
@@ -157,12 +163,61 @@ function _source(numbers::QuasiRandom, chunk::_Chunk, factors::Integer, steps::I
     point = zeros(dimension)
     chunk.offset > 1 && Sobol.skip!(sequence, chunk.offset - 1, point; exact = true)
     shift = rand(Xoshiro(numbers.seed + UInt64(chunk.replicate) * _STREAM_STEP), UInt32, dimension)
-    return _QuasiSource(sequence, shift, point, zeros(dimension), zeros(steps + 1), bridge, chunk.offset == 0)
+    return _QuasiSource(sequence, shift, point, zeros(dimension), zeros(steps + 1), bridge, zeros(Int, steps + 1), chunk.offset == 0)
 end
 
-_fill_normals!(Z::AbstractMatrix, source::_PseudoSource) = randn!(source.rng, Z)
+function _binomial_quantile(u::Real, trials::Integer, p::Real)
+    probability = (1 - p)^trials
+    total = probability
+    count = 0
+    while u > total && count < trials
+        count += 1
+        probability *= (trials - count + 1) / count * p / (1 - p)
+        total += probability
+    end
+    return count
+end
 
-function _fill_normals!(Z::AbstractMatrix, source::_QuasiSource)
+# Fills the jump rows of one path, the count in row 3 and in row 4 the standard normal of
+# the jump size. In the order of the bridge, as in Algorithm 7 of Baldeaux and Roberts
+# (2012): the total count, then its split by binomial draws, and the sum of the standardised
+# jump sizes in the same way, given the counts.
+function _bridge_jumps!(Z::AbstractMatrix, source::_QuasiSource, jump_rate::Real)
+    factors, steps = size(Z)
+    normal, counts, sums, bridge = source.normal, source.counts, source.W, source.bridge
+    counts[1] = 0
+    counts[steps + 1] = _poisson_quantile(_normal_cdf(normal[3]), jump_rate * steps)
+    sums[1] = 0.0
+    sums[steps + 1] = sqrt(float(counts[steps + 1])) * normal[4]
+    for k in eachindex(bridge.middle)
+        l, m, r = bridge.left[k] + 1, bridge.middle[k] + 1, bridge.right[k] + 1
+        total = counts[r] - counts[l]
+        early = _binomial_quantile(_normal_cdf(normal[k * factors + 3]), total, bridge.right_weight[k])
+        counts[m] = counts[l] + early
+        sums[m] = sums[l]
+        if total > 0
+            sums[m] += (sums[r] - sums[l]) * early / total + sqrt(early * (total - early) / total) * normal[k * factors + 4]
+        end
+    end
+    for i in 1:steps
+        jumps = counts[i + 1] - counts[i]
+        Z[3, i] = jumps
+        Z[4, i] = jumps == 0 ? 0.0 : (sums[i + 1] - sums[i]) / sqrt(float(jumps))
+    end
+    return nothing
+end
+
+function _fill_normals!(Z::AbstractMatrix, source::_PseudoSource, jump_rate::Real)
+    randn!(source.rng, Z)
+    if size(Z, 1) == 4
+        for i in axes(Z, 2)
+            Z[3, i] = _poisson_quantile(_normal_cdf(Z[3, i]), jump_rate)
+        end
+    end
+    return Z
+end
+
+function _fill_normals!(Z::AbstractMatrix, source::_QuasiSource, jump_rate::Real)
     # Sobol.jl leaves out the origin, without which the first 2^k points are not balanced.
     source.at_origin ? fill!(source.point, 0.0) : Sobol.next!(source.sequence, source.point)
     source.at_origin = false
@@ -170,11 +225,9 @@ function _fill_normals!(Z::AbstractMatrix, source::_QuasiSource)
         bits = xor(trunc(UInt32, ldexp(source.point[k], 32)), source.shift[k])
         source.normal[k] = _normal_quantile(ldexp(bits + 0.5, -32))
     end
-    factors, steps = size(Z)
+    factors = size(Z, 1)
     _bridge_increments!(Z, 1, source.normal, factors, source.bridge, source.W)
     _bridge_increments!(Z, 2, source.normal, factors, source.bridge, source.W)
-    for i in 1:steps, factor in 3:factors
-        Z[factor, i] = source.normal[(i - 1) * factors + factor]
-    end
+    factors == 4 && _bridge_jumps!(Z, source, jump_rate)
     return Z
 end

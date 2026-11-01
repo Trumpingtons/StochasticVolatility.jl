@@ -1,0 +1,4 @@
+QuantLib 1.44 (C++), adaptive 1e-13	Heston	678.763
+QuantLib 1.44 (C++), Laguerre 192	Heston	1906.994
+QuantLib 1.44 (C++), Laguerre 192	Bates	1947.374
+QuantLib 1.44 (C++), sabrVolatility and blackFormula	SABR	0.104
