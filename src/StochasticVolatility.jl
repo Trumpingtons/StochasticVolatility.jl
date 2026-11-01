@@ -2,8 +2,22 @@ module StochasticVolatility
 
 include("HighFrequency.jl")
 include("RangeBased.jl")
+include("Models.jl")
+include("RandomNumbers.jl")
+include("Simulation.jl")
 
-export bipower_variation,
+export Heston,
+       Bates,
+       SABR,
+       FullTruncation,
+       QuadraticExponential,
+       Euler,
+       PseudoRandom,
+       QuasiRandom,
+       SimulatedPaths,
+       simulate,
+       simulate_terminal,
+       bipower_variation,
        realized_variance,
        realized_volatility,
        realized_semivariance,

@@ -1,8 +1,14 @@
 # StochasticVolatility.jl
 
-`StochasticVolatility.jl` is a Julia package that includes implementations of historical volatility, range-based volatility measures, realized variance estimators, and jump detection tests.
+`StochasticVolatility.jl` is a Julia package that simulates the Heston, Bates and SABR stochastic volatility models, and includes implementations of historical volatility, range-based volatility measures, realized variance estimators, and jump detection tests.
 
 ## Features
+
+- `Heston`, `Bates`, `SABR` — the models
+- `simulate(model, T; paths, steps, scheme, numbers, threaded)` — simulated paths of the price and of the variance or volatility
+- `simulate_terminal(model, T; ...)` — the terminal prices only
+- `QuadraticExponential()`, `FullTruncation()` — schemes for Heston and Bates; `Euler()` for SABR
+- `PseudoRandom(seed=...)`, `QuasiRandom(seed=..., replicates=...)` — random and quasi-random numbers
 
 - `historical_volatility(close; scale=1)` — close-to-close historical volatility estimator
 - `historical_variance(close; scale=1)` — close-to-close historical variance estimator
@@ -31,10 +37,25 @@
 
 ```julia
 using Pkg
-Pkg.add(path="/path/to/StochasticVolatility")
+Pkg.add(path="/path/to/StochasticVolatility.jl")
 ```
 
 ## Usage
+
+Simulate a model, here on all the threads Julia was started with (`julia -t auto`). The same seed gives the same paths on any number of threads.
+
+```julia
+using StochasticVolatility
+
+model = Heston(S0=100, v0=0.04, mu=0.05, kappa=2, theta=0.04, xi=0.3, rho=-0.7)
+result = simulate(model, 1.0; paths=10_000, steps=252, numbers=PseudoRandom(seed=1))
+result.time, result.price, result.state  # times, prices and variances, one column per path
+
+# Quasi-random numbers: paths must be replicates times a power of 2
+terminal = simulate_terminal(model, 1.0; paths=16 * 2^12, steps=252, numbers=QuasiRandom(seed=1, replicates=16))
+```
+
+Measure volatility from data:
 
 ```julia
 using StochasticVolatility

@@ -315,7 +315,7 @@ version = "2.7.2"
 
 [[deps.StochasticVolatility]]
 deps = ["SpecialFunctions"]
-path = "/Users/antonio/StochasticVolatility"
+path = ".."
 uuid = "c3f83b8a-3cc9-4a74-b44c-79f892b0a5a4"
 version = "0.1.0"
 

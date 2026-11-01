@@ -1,6 +1,27 @@
 # API Reference
 
-This page documents the public functions exported by `StochasticVolatility`.
+This page documents the public functions exported by the `StochasticVolatility` module.
+
+## Models
+
+```@docs
+Heston
+Bates
+SABR
+```
+
+## Simulation
+
+```@docs
+simulate
+simulate_terminal
+SimulatedPaths
+QuadraticExponential
+FullTruncation
+Euler
+PseudoRandom
+QuasiRandom
+```
 
 ## Price-Based Volatility
 

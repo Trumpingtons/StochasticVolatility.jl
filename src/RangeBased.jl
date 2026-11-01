@@ -168,11 +168,12 @@ end
 - `location`: constant in the approximate relation `log(range) ≈ location + log(volatility)`.
 
 # Returns
-- `Real`: the root mean square ABD range-based volatility proxy.
+- `Real`: the ABD range-based volatility proxy.
 
-The proxy uses `log(high / low) / exp(location)` period by period. The default
+The proxy is `exp(mean(log(log(high / low))) - location)`. The default
 `location = 0.43` follows the approximation in Alizadeh, Brandt, and Diebold
-that the log range is approximately Gaussian with mean `0.43 + log(volatility)`.
+that the log range is approximately Gaussian with mean `0.43 + log(volatility)`,
+so it is the mean of the log range that estimates `location + log(volatility)`.
 """
 function alizadeh_brandt_diebold(high::AbstractVector{<:Real}, low::AbstractVector{<:Real}; location::Real = 0.43)
     n = _require_same_length("high" => high, "low" => low)
@@ -180,13 +181,12 @@ function alizadeh_brandt_diebold(high::AbstractVector{<:Real}, low::AbstractVect
     _validate_high_low(high, low)
 
     total = zero(float(first(high)))
-    scale = exp(location)
     for i in eachindex(high, low)
-        proxy = log(high[i] / low[i]) / scale
-        total += abs2(proxy)
+        high[i] > low[i] || throw(DomainError(high[i], "high must exceed low, since the log of a zero range is not finite."))
+        total += log(log(high[i] / low[i]))
     end
 
-    sqrt(total / n)
+    exp(total / n - location)
 end
 
 """Parkinson volatility estimator from high and low prices.
