@@ -1,0 +1,8 @@
+# QuantLib 1.44 C++ FdBatesVanillaEngine, American call, K 100, T 0.5, r 0.03, q 0.05, v0 0.04, kappa 2, theta 0.04, sigma 0.25, rho -0.5, lambda 0.2, nu -0.58, delta 0.4. Scheme Hundsdorfer, QuantLib's own meshes, one thread.
+# time_steps price_points variance_points S0 quantlib_american seconds
+100 100 50 80 0.331071 0.415
+100 100 50 90 2.108276 0.401
+100 100 50 100 6.714004 0.395
+100 100 50 110 13.759956 0.402
+100 100 50 120 22.153021 0.397
+200 200 100 80 0.329999 3.257

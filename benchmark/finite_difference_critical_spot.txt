@@ -1,0 +1,11 @@
+# Critical spot of an American put, time 0, Heston, v0 0.0348, kappa 1.15, theta 0.0348, xi 0.39, rho -0.64, rate 0.04 a year (mu = rate), T 0.25 years, K 100. Finite differences (MCS-IT), exercise at every time step including time 0.
+# Longstaff-Schwartz, stored in longstaff_schwartz_critical_spot.txt, 131072 quasi-random paths, 60 dates: exercises at time 0 at S0 90.2, holds at S0 90.3.
+# price_points variance_points steps critical_spot last_exercise_node_nearest_line next_node seconds
+300 150 60 89.65 89.6338 89.875 1.9
+600 300 60 89.9022 89.875 89.9934 0.44
+1200 600 60 89.9583 89.9344 89.9934 1.73
+2400 1200 60 89.9507 89.9344 89.9639 6.88
+300 150 75 89.5327 89.6338 89.875 0.12
+600 300 150 89.6406 89.7551 89.875 0.98
+1200 600 300 89.6895 89.7551 89.8152 8.29
+2400 1200 600 89.6754 89.7249 89.7551 68.01

@@ -1,0 +1,16 @@
+# finite_difference_price, American, F0 100, alpha 2, beta 0.5, rho -0.7, nu 0.8, T 0.25, rate 0.05. 400 forward points, 50 volatility points, 64 time steps, 1 thread. 0.729 s for 14 prices, compilation excluded.
+# rate type K fd_american
+0.05 put 50.0 0.00251
+0.05 put 75.0 0.125977
+0.05 put 95.0 2.15524
+0.05 put 100.0 3.946661
+0.05 put 105.0 6.725655
+0.05 put 125.0 25.0
+0.05 put 200.0 100.0
+0.05 call 50.0 50.0
+0.05 call 75.0 25.030746
+0.05 call 95.0 7.111225
+0.05 call 100.0 3.946501
+0.05 call 105.0 1.768895
+0.05 call 125.0 0.002169
+0.05 call 200.0 0.0

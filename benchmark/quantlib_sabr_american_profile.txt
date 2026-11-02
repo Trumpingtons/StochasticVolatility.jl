@@ -1,0 +1,495 @@
+Analysis of sampling quantlib_timing (pid 11343) every 1 millisecond
+Process:         quantlib_timing [11343]
+Path:            /Users/USER/*/quantlib_timing
+Load Address:    0x102cb8000
+Identifier:      quantlib_timing
+Version:         0
+Code Type:       ARM64
+Platform:        macOS
+Parent Process:  zsh [11342]
+Target Type:     live task
+
+Date/Time:       2026-11-02 00:34:38.879 +0000
+Launch Time:     2026-11-02 00:34:36.807 +0000
+OS Version:      macOS 26.6.2 (25G83)
+Report Version:  7
+Analysis Tool:   /usr/bin/sample
+
+Physical footprint:         15.0M
+Physical footprint (peak):  15.0M
+Idle exit:                  untracked
+----
+
+Call graph:
+    8070 Thread_5689713   DispatchQueue_1: com.apple.main-thread  (serial)
+      8070 start  (in dyld) + 6992  [0x18c3404e4]
+        8070 main  (in quantlib_timing) + 1788  [0x102cb8e40]
+          8070 main::$_0::operator()(QuantLib::Option::Type, double, unsigned long, unsigned long, unsigned long) const  (in quantlib_timing) + 608  [0x102cb9668]
+            8070 QuantLib::Instrument::NPV() const  (in quantlib_timing) + 36  [0x102cb9e6c]
+              8070 QuantLib::Instrument::calculate() const  (in libQuantLib.0.dylib) + 108  [0x104cc1514]
+                8070 QuantLib::Instrument::performCalculations() const  (in libQuantLib.0.dylib) + 136  [0x104cc15d4]
+                  7905 QuantLib::FdSabrVanillaEngine::calculate() const  (in libQuantLib.0.dylib) + 1580  [0x1051d7d04]
+                  + 7905 QuantLib::Fdm2DimSolver::interpolateAt(double, double) const  (in libQuantLib.0.dylib) + 40  [0x104fc1468]
+                  +   7905 QuantLib::LazyObject::calculate() const  (in libQuantLib.0.dylib) + 56  [0x104cb9698]
+                  +     7882 QuantLib::Fdm2DimSolver::performCalculations() const  (in libQuantLib.0.dylib) + 184  [0x104fc1100]
+                  +     ! 7882 QuantLib::FdmBackwardSolver::rollback(QuantLib::Array&, double, double, unsigned long, unsigned long)  (in libQuantLib.0.dylib) + 3596  [0x104fd0568]
+                  +     !   7293 QuantLib::FiniteDifferenceModel<QuantLib::HundsdorferScheme>::rollbackImpl(QuantLib::Array&, double, double, unsigned long, QuantLib::StepCondition<QuantLib::Array> const*)  (in libQuantLib.0.dylib) + 428  [0x104fd2728]
+                  +     !   : 1721 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 752  [0x105004930]
+                  +     !   : | 1396 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 92  [0x104ff8fd4]
+                  +     !   : | + 1394 QuantLib::NinePointLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 272,176,...  [0x10501059c,0x10501053c,...]
+                  +     !   : | + 2 QuantLib::NinePointLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 96  [0x1050104ec]
+                  +     !   : | +   2 operator new(unsigned long)  (in libc++abi.dylib) + 52  [0x18c6c27e8]
+                  +     !   : | +     2 _xzm_malloc_large_huge  (in libsystem_malloc.dylib) + 464  [0x18c527458]
+                  +     !   : | +       2 xzm_segment_group_alloc_chunk  (in libsystem_malloc.dylib) + 504  [0x18c5105f4]
+                  +     !   : | +         2 _xzm_segment_group_find_and_allocate_chunk  (in libsystem_malloc.dylib) + 528  [0x18c510c30]
+                  +     !   : | +           1 _xzm_segment_group_span_mark_smaller  (in libsystem_malloc.dylib) + 364  [0x18c5121c4]
+                  +     !   : | +           : 1 xzm_reclaim_mark_free_locked  (in libsystem_malloc.dylib) + 116  [0x18c50f968]
+                  +     !   : | +           :   1 mach_vm_reclaim_try_enter  (in libsystem_kernel.dylib) + 128  [0x18c6db0d4]
+                  +     !   : | +           1 _xzm_segment_group_span_mark_smaller  (in libsystem_malloc.dylib) + 60  [0x18c512094]
+                  +     !   : | 207 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 60  [0x104ff8fb4]
+                  +     !   : | + 207 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 156,176,...  [0x105017c14,0x105017c28,...]
+                  +     !   : | 63 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 44  [0x104ff8fa4]
+                  +     !   : | + 62 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 156,176,...  [0x105017c14,0x105017c28,...]
+                  +     !   : | + 1 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 116  [0x105017bec]
+                  +     !   : | +   1 operator new(unsigned long)  (in libc++abi.dylib) + 52  [0x18c6c27e8]
+                  +     !   : | +     1 _xzm_malloc_large_huge  (in libsystem_malloc.dylib) + 304  [0x18c5273b8]
+                  +     !   : | 30 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 108  [0x104ff8fe4]
+                  +     !   : | + 30 QuantLib::operator+(QuantLib::Array&&, QuantLib::Array&&)  (in libQuantLib.0.dylib) + 88  [0x104df08d0]
+                  +     !   : | 23 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 76  [0x104ff8fc4]
+                  +     !   : | + 23 QuantLib::operator+(QuantLib::Array&&, QuantLib::Array&&)  (in libQuantLib.0.dylib) + 88  [0x104df08d0]
+                  +     !   : | 2 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 140  [0x104ff9004]
+                  +     !   : |   1 xzm_segment_group_free_chunk  (in libsystem_malloc.dylib) + 636  [0x18c5113bc]
+                  +     !   : |   ! 1 _xzm_segment_group_segment_span_free_coalesce  (in libsystem_malloc.dylib) + 548  [0x18c511af0]
+                  +     !   : |   !   1 _xzm_segment_group_segment_span_free  (in libsystem_malloc.dylib) + 40  [0x18c5133f8]
+                  +     !   : |   1 xzm_segment_group_free_chunk  (in libsystem_malloc.dylib) + 836  [0x18c511484]
+                  +     !   : 1717 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 168  [0x1050046e8]
+                  +     !   : | 1381 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 92  [0x104ff8fd4]
+                  +     !   : | + 1380 QuantLib::NinePointLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 272,176,...  [0x10501059c,0x10501053c,...]
+                  +     !   : | + 1 QuantLib::NinePointLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 96  [0x1050104ec]
+                  +     !   : | +   1 operator new(unsigned long)  (in libc++abi.dylib) + 52  [0x18c6c27e8]
+                  +     !   : | +     1 _xzm_malloc_large_huge  (in libsystem_malloc.dylib) + 464  [0x18c527458]
+                  +     !   : | +       1 xzm_segment_group_alloc_chunk  (in libsystem_malloc.dylib) + 504  [0x18c5105f4]
+                  +     !   : | +         1 _xzm_segment_group_find_and_allocate_chunk  (in libsystem_malloc.dylib) + 528  [0x18c510c30]
+                  +     !   : | +           1 _xzm_segment_group_span_mark_smaller  (in libsystem_malloc.dylib) + 240  [0x18c512148]
+                  +     !   : | +             1 _xzm_reclaim_mark_used_locked  (in libsystem_malloc.dylib) + 60  [0x18c512a9c]
+                  +     !   : | +               1 mach_vm_reclaim_try_cancel  (in libsystem_kernel.dylib) + 260  [0x18c6db2f8]
+                  +     !   : | +                 1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x18c6c810c]
+                  +     !   : | 153 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 44  [0x104ff8fa4]
+                  +     !   : | + 153 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 156,176,...  [0x105017c14,0x105017c28,...]
+                  +     !   : | 134 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 60  [0x104ff8fb4]
+                  +     !   : | + 134 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 156,176,...  [0x105017c14,0x105017c28,...]
+                  +     !   : | 31 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 76  [0x104ff8fc4]
+                  +     !   : | + 31 QuantLib::operator+(QuantLib::Array&&, QuantLib::Array&&)  (in libQuantLib.0.dylib) + 88,84  [0x104df08d0,0x104df08cc]
+                  +     !   : | 18 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 108  [0x104ff8fe4]
+                  +     !   : |   18 QuantLib::operator+(QuantLib::Array&&, QuantLib::Array&&)  (in libQuantLib.0.dylib) + 88  [0x104df08d0]
+                  +     !   : 1544 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 548  [0x105004864]
+                  +     !   : | 1541 QuantLib::TripleBandLinearOp::solve_splitting(QuantLib::Array const&, double, double) const  (in libQuantLib.0.dylib) + 288,592,...  [0x1050180c4,0x1050181f4,...]
+                  +     !   : | 2 QuantLib::TripleBandLinearOp::solve_splitting(QuantLib::Array const&, double, double) const  (in libQuantLib.0.dylib) + 148  [0x105018038]
+                  +     !   : | + 2 operator new(unsigned long)  (in libc++abi.dylib) + 52  [0x18c6c27e8]
+                  +     !   : | +   1 _xzm_malloc_large_huge  (in libsystem_malloc.dylib) + 464  [0x18c527458]
+                  +     !   : | +   ! 1 xzm_segment_group_alloc_chunk  (in libsystem_malloc.dylib) + 504  [0x18c5105f4]
+                  +     !   : | +   !   1 _xzm_segment_group_find_and_allocate_chunk  (in libsystem_malloc.dylib) + 528  [0x18c510c30]
+                  +     !   : | +   !     1 _xzm_segment_group_span_mark_smaller  (in libsystem_malloc.dylib) + 240  [0x18c512148]
+                  +     !   : | +   !       1 _xzm_reclaim_mark_used_locked  (in libsystem_malloc.dylib) + 60  [0x18c512a9c]
+                  +     !   : | +   !         1 mach_vm_reclaim_try_cancel  (in libsystem_kernel.dylib) + 260  [0x18c6db2f8]
+                  +     !   : | +   !           1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x18c6c810c]
+                  +     !   : | +   1 _xzm_malloc_large_huge  (in libsystem_malloc.dylib) + 500  [0x18c52747c]
+                  +     !   : | 1 QuantLib::TripleBandLinearOp::solve_splitting(QuantLib::Array const&, double, double) const  (in libQuantLib.0.dylib) + 180  [0x105018058]
+                  +     !   : |   1 operator new(unsigned long)  (in libc++abi.dylib) + 52  [0x18c6c27e8]
+                  +     !   : |     1 _xzm_malloc_large_huge  (in libsystem_malloc.dylib) + 464  [0x18c527458]
+                  +     !   : |       1 xzm_segment_group_alloc_chunk  (in libsystem_malloc.dylib) + 504  [0x18c5105f4]
+                  +     !   : |         1 _xzm_segment_group_find_and_allocate_chunk  (in libsystem_malloc.dylib) + 324  [0x18c510b64]
+                  +     !   : 1231 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 1100  [0x105004a8c]
+                  +     !   : | 1230 QuantLib::TripleBandLinearOp::solve_splitting(QuantLib::Array const&, double, double) const  (in libQuantLib.0.dylib) + 288,332,...  [0x1050180c4,0x1050180f0,...]
+                  +     !   : | 1 QuantLib::TripleBandLinearOp::solve_splitting(QuantLib::Array const&, double, double) const  (in libQuantLib.0.dylib) + 180  [0x105018058]
+                  +     !   : |   1 operator new(unsigned long)  (in libc++abi.dylib) + 52  [0x18c6c27e8]
+                  +     !   : |     1 _xzm_malloc_large_huge  (in libsystem_malloc.dylib) + 464  [0x18c527458]
+                  +     !   : |       1 xzm_segment_group_alloc_chunk  (in libsystem_malloc.dylib) + 524  [0x18c510608]
+                  +     !   : 390 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 968  [0x105004a08]
+                  +     !   : | 390 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 156,176,...  [0x105017c14,0x105017c28,...]
+                  +     !   : 212 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 100  [0x1050046a4]
+                  +     !   : | 145 QuantLib::FdmSabrOp::setTime(double, double)  (in libQuantLib.0.dylib) + 308  [0x104ff8ed0]
+                  +     !   : | + 145 QuantLib::TripleBandLinearOp::axpyb(QuantLib::Array const&, QuantLib::TripleBandLinearOp const&, QuantLib::TripleBandLinearOp const&, QuantLib::Array const&)  (in libQuantLib.0.dylib) + 188,172,...  [0x1050174cc,0x1050174bc,...]
+                  +     !   : | 66 QuantLib::FdmSabrOp::setTime(double, double)  (in libQuantLib.0.dylib) + 208  [0x104ff8e6c]
+                  +     !   : | + 66 QuantLib::TripleBandLinearOp::axpyb(QuantLib::Array const&, QuantLib::TripleBandLinearOp const&, QuantLib::TripleBandLinearOp const&, QuantLib::Array const&)  (in libQuantLib.0.dylib) + 260,264  [0x105017514,0x105017518]
+                  +     !   : | 1 QuantLib::FdmSabrOp::setTime(double, double)  (in libQuantLib.0.dylib) + 340  [0x104ff8ef0]
+                  +     !   : |   1 _xzm_free  (in libsystem_malloc.dylib) + 304  [0x18c528248]
+                  +     !   : 177 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 416  [0x1050047e0]
+                  +     !   : | 177 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 156,176,...  [0x105017c14,0x105017c28,...]
+                  +     !   : 119 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 1004,452,...  [0x105004a2c,0x105004804,...]
+                  +     !   : 59 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 1028  [0x105004a44]
+                  +     !   : | 59 QuantLib::operator-(QuantLib::Array const&, QuantLib::Array&&)  (in libQuantLib.0.dylib) + 88,72  [0x104f857f8,0x104f857e8]
+                  +     !   : 41 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 812  [0x10500496c]
+                  +     !   : | 41 QuantLib::operator+(QuantLib::Array const&, QuantLib::Array&&)  (in libQuantLib.0.dylib) + 88  [0x104f859b4]
+                  +     !   : 40 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 476  [0x10500481c]
+                  +     !   : | 40 QuantLib::operator-(QuantLib::Array const&, QuantLib::Array&&)  (in libQuantLib.0.dylib) + 88  [0x104f857f8]
+                  +     !   : 19 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 224  [0x105004720]
+                  +     !   : | 19 QuantLib::operator+(QuantLib::Array const&, QuantLib::Array&&)  (in libQuantLib.0.dylib) + 88  [0x104f859b4]
+                  +     !   : 9 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 312  [0x105004778]
+                  +     !   : | 9 _platform_memmove  (in libsystem_platform.dylib) + 88  [0x18c7153b8]
+                  +     !   : 8 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 728  [0x105004918]
+                  +     !   : | 8 QuantLib::operator-(QuantLib::Array const&, QuantLib::Array const&)  (in libQuantLib.0.dylib) + 104,88,...  [0x104ddbf58,0x104ddbf48,...]
+                  +     !   : 2 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 1124  [0x105004aa4]
+                  +     !   : | 1 _xzm_free_large_huge  (in libsystem_malloc.dylib) + 48  [0x18c5319ac]
+                  +     !   : | 1 _xzm_free_outlined  (in libsystem_malloc.dylib) + 100  [0x18c5304e0]
+                  +     !   : 1 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 120  [0x1050046b8]
+                  +     !   : | 1 QuantLib::BoundaryConditionSchemeHelper::setTime(double) const  (in libQuantLib.0.dylib) + 88  [0x104fb4df4]
+                  +     !   : |   1 QuantLib::FdmTimeDepDirichletBoundary::setTime(double)  (in libQuantLib.0.dylib) + 72  [0x105000cd0]
+                  +     !   : 1 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 136  [0x1050046c8]
+                  +     !   : | 1 QuantLib::BoundaryConditionSchemeHelper::applyBeforeApplying(QuantLib::FdmLinearOp&) const  (in libQuantLib.0.dylib) + 84  [0x104fb4e8c]
+                  +     !   : |   1 QuantLib::FdmDiscountDirichletBoundary::applyBeforeApplying(QuantLib::FdmLinearOp&) const  (in libQuantLib.0.dylib) + 20  [0x104fe303c]
+                  +     !   : 1 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 572  [0x10500487c]
+                  +     !   : | 1 _xzm_free_outlined  (in libsystem_malloc.dylib) + 204  [0x18c530548]
+                  +     !   : 1 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 1284  [0x105004b44]
+                  +     !   :   1 _xzm_free_large_huge  (in libsystem_malloc.dylib) + 8  [0x18c531984]
+                  +     !   348 QuantLib::FiniteDifferenceModel<QuantLib::HundsdorferScheme>::rollbackImpl(QuantLib::Array&, double, double, unsigned long, QuantLib::StepCondition<QuantLib::Array> const*)  (in libQuantLib.0.dylib) + 456  [0x104fd2744]
+                  +     !   : 348 QuantLib::FdmStepConditionComposite::applyTo(QuantLib::Array&, double) const  (in libQuantLib.0.dylib) + 100  [0x104fff340]
+                  +     !   :   348 QuantLib::FdmStepConditionComposite::applyTo(QuantLib::Array&, double) const  (in libQuantLib.0.dylib) + 100  [0x104fff340]
+                  +     !   :     229 QuantLib::FdmAmericanStepCondition::applyTo(QuantLib::Array&, double) const  (in libQuantLib.0.dylib) + 268  [0x104fcb6f0]
+                  +     !   :     | 106 QuantLib::FdmCellAveragingInnerValue::innerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 100,72,...  [0x104ff4204,0x104ff41e8,...]
+                  +     !   :     | 37 QuantLib::FdmCellAveragingInnerValue::innerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 56  [0x104ff41d8]
+                  +     !   :     | + 37 QuantLib::FdmMesherComposite::location(QuantLib::FdmLinearOpIterator const&, unsigned long) const  (in libQuantLib.0.dylib) + 32,52  [0x104ff6f40,0x104ff6f54]
+                  +     !   :     | 31 QuantLib::PlainVanillaPayoff::operator()(double) const  (in libQuantLib.0.dylib) + 80,76,...  [0x104f289fc,0x104f289f8,...]
+                  +     !   :     | 30 QuantLib::FdmMesherComposite::location(QuantLib::FdmLinearOpIterator const&, unsigned long) const  (in libQuantLib.0.dylib) + 64,68  [0x104ff6f60,0x104ff6f64]
+                  +     !   :     | 22 QuantLib::FdmCellAveragingInnerValue::innerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 96  [0x104ff4200]
+                  +     !   :     | + 22 std::__function::__func<QuantLib::FdmCellAveragingInnerValue::FdmCellAveragingInnerValue(boost::shared_ptr<QuantLib::Payoff>, boost::shared_ptr<QuantLib::FdmMesher>, unsigned long, std::function<double (double)>)::'lambda'(double), double (double)>::operator()(double&&)  (in libQuantLib.0.dylib) + 0  [0x1051ccf28]
+                  +     !   :     | 3 QuantLib::FdmCellAveragingInnerValue::innerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 112  [0x104ff4210]
+                  +     !   :     |   3 QuantLib::PlainVanillaPayoff::operator()(double) const  (in libQuantLib.0.dylib) + 20,28,...  [0x104f289c0,0x104f289c8,...]
+                  +     !   :     100 QuantLib::FdmAmericanStepCondition::applyTo(QuantLib::Array&, double) const  (in libQuantLib.0.dylib) + 300,240,...  [0x104fcb710,0x104fcb6d4,...]
+                  +     !   :     19 QuantLib::FdmCellAveragingInnerValue::innerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 120,124,...  [0x104ff4218,0x104ff421c,...]
+                  +     !   114 QuantLib::FiniteDifferenceModel<QuantLib::HundsdorferScheme>::rollbackImpl(QuantLib::Array&, double, double, unsigned long, QuantLib::StepCondition<QuantLib::Array> const*)  (in libQuantLib.0.dylib) + 268  [0x104fd2688]
+                  +     !   : 35 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 752  [0x105004930]
+                  +     !   : | 30 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 92  [0x104ff8fd4]
+                  +     !   : | + 30 QuantLib::NinePointLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 272,176,...  [0x10501059c,0x10501053c,...]
+                  +     !   : | 3 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 60  [0x104ff8fb4]
+                  +     !   : | + 3 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 156,176  [0x105017c14,0x105017c28]
+                  +     !   : | 1 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 44  [0x104ff8fa4]
+                  +     !   : | + 1 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 156  [0x105017c14]
+                  +     !   : | 1 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 76  [0x104ff8fc4]
+                  +     !   : |   1 QuantLib::operator+(QuantLib::Array&&, QuantLib::Array&&)  (in libQuantLib.0.dylib) + 88  [0x104df08d0]
+                  +     !   : 21 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 548  [0x105004864]
+                  +     !   : | 21 QuantLib::TripleBandLinearOp::solve_splitting(QuantLib::Array const&, double, double) const  (in libQuantLib.0.dylib) + 592,544,...  [0x1050181f4,0x1050181c4,...]
+                  +     !   : 20 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 168  [0x1050046e8]
+                  +     !   : | 15 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 92  [0x104ff8fd4]
+                  +     !   : | + 15 QuantLib::NinePointLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 272,176,...  [0x10501059c,0x10501053c,...]
+                  +     !   : | 3 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 44  [0x104ff8fa4]
+                  +     !   : | + 3 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 176,180  [0x105017c28,0x105017c2c]
+                  +     !   : | 2 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 60  [0x104ff8fb4]
+                  +     !   : |   2 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 156,176  [0x105017c14,0x105017c28]
+                  +     !   : 20 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 1100  [0x105004a8c]
+                  +     !   : | 20 QuantLib::TripleBandLinearOp::solve_splitting(QuantLib::Array const&, double, double) const  (in libQuantLib.0.dylib) + 412,288,...  [0x105018140,0x1050180c4,...]
+                  +     !   : 7 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 416  [0x1050047e0]
+                  +     !   : | 7 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 224,156,...  [0x105017c58,0x105017c14,...]
+                  +     !   : 6 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 100  [0x1050046a4]
+                  +     !   : | 6 QuantLib::FdmSabrOp::setTime(double, double)  (in libQuantLib.0.dylib) + 308  [0x104ff8ed0]
+                  +     !   : |   6 QuantLib::TripleBandLinearOp::axpyb(QuantLib::Array const&, QuantLib::TripleBandLinearOp const&, QuantLib::TripleBandLinearOp const&, QuantLib::Array const&)  (in libQuantLib.0.dylib) + 188,164,...  [0x1050174cc,0x1050174b4,...]
+                  +     !   : 2 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 968  [0x105004a08]
+                  +     !   : | 2 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 156,168  [0x105017c14,0x105017c20]
+                  +     !   : 1 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 224  [0x105004720]
+                  +     !   : | 1 QuantLib::operator+(QuantLib::Array const&, QuantLib::Array&&)  (in libQuantLib.0.dylib) + 88  [0x104f859b4]
+                  +     !   : 1 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 312  [0x105004778]
+                  +     !   : | 1 _platform_memmove  (in libsystem_platform.dylib) + 88  [0x18c7153b8]
+                  +     !   : 1 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 200  [0x105004708]
+                  +     !   111 QuantLib::FiniteDifferenceModel<QuantLib::HundsdorferScheme>::rollbackImpl(QuantLib::Array&, double, double, unsigned long, QuantLib::StepCondition<QuantLib::Array> const*)  (in libQuantLib.0.dylib) + 368  [0x104fd26ec]
+                  +     !   : 31 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 548  [0x105004864]
+                  +     !   : | 31 QuantLib::TripleBandLinearOp::solve_splitting(QuantLib::Array const&, double, double) const  (in libQuantLib.0.dylib) + 288,544,...  [0x1050180c4,0x1050181c4,...]
+                  +     !   : 28 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 752  [0x105004930]
+                  +     !   : | 28 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 92  [0x104ff8fd4]
+                  +     !   : |   28 QuantLib::NinePointLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 272,176,...  [0x10501059c,0x10501053c,...]
+                  +     !   : 22 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 168  [0x1050046e8]
+                  +     !   : | 14 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 92  [0x104ff8fd4]
+                  +     !   : | + 14 QuantLib::NinePointLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 272,176,...  [0x10501059c,0x10501053c,...]
+                  +     !   : | 6 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 44  [0x104ff8fa4]
+                  +     !   : | + 6 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 156,164,...  [0x105017c14,0x105017c1c,...]
+                  +     !   : | 2 QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 60  [0x104ff8fb4]
+                  +     !   : |   2 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 176  [0x105017c28]
+                  +     !   : 14 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 1100  [0x105004a8c]
+                  +     !   : | 14 QuantLib::TripleBandLinearOp::solve_splitting(QuantLib::Array const&, double, double) const  (in libQuantLib.0.dylib) + 288,332,...  [0x1050180c4,0x1050180f0,...]
+                  +     !   : 8 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 968  [0x105004a08]
+                  +     !   : | 8 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 156,176,...  [0x105017c14,0x105017c28,...]
+                  +     !   : 4 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 100  [0x1050046a4]
+                  +     !   : | 2 QuantLib::FdmSabrOp::setTime(double, double)  (in libQuantLib.0.dylib) + 208  [0x104ff8e6c]
+                  +     !   : | + 2 QuantLib::TripleBandLinearOp::axpyb(QuantLib::Array const&, QuantLib::TripleBandLinearOp const&, QuantLib::TripleBandLinearOp const&, QuantLib::Array const&)  (in libQuantLib.0.dylib) + 260  [0x105017514]
+                  +     !   : | 2 QuantLib::FdmSabrOp::setTime(double, double)  (in libQuantLib.0.dylib) + 308  [0x104ff8ed0]
+                  +     !   : |   2 QuantLib::TripleBandLinearOp::axpyb(QuantLib::Array const&, QuantLib::TripleBandLinearOp const&, QuantLib::TripleBandLinearOp const&, QuantLib::Array const&)  (in libQuantLib.0.dylib) + 172,188  [0x1050174bc,0x1050174cc]
+                  +     !   : 4 QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib) + 416  [0x1050047e0]
+                  +     !   :   4 QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 228,176,...  [0x105017c5c,0x105017c28,...]
+                  +     !   8 QuantLib::FiniteDifferenceModel<QuantLib::HundsdorferScheme>::rollbackImpl(QuantLib::Array&, double, double, unsigned long, QuantLib::StepCondition<QuantLib::Array> const*)  (in libQuantLib.0.dylib) + 300  [0x104fd26a8]
+                  +     !   : 8 QuantLib::FdmStepConditionComposite::applyTo(QuantLib::Array&, double) const  (in libQuantLib.0.dylib) + 100  [0x104fff340]
+                  +     !   :   7 QuantLib::FdmStepConditionComposite::applyTo(QuantLib::Array&, double) const  (in libQuantLib.0.dylib) + 100  [0x104fff340]
+                  +     !   :   | 3 QuantLib::FdmAmericanStepCondition::applyTo(QuantLib::Array&, double) const  (in libQuantLib.0.dylib) + 300,332  [0x104fcb710,0x104fcb730]
+                  +     !   :   | 2 QuantLib::FdmAmericanStepCondition::applyTo(QuantLib::Array&, double) const  (in libQuantLib.0.dylib) + 268  [0x104fcb6f0]
+                  +     !   :   | + 1 QuantLib::FdmCellAveragingInnerValue::innerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 96  [0x104ff4200]
+                  +     !   :   | + ! 1 std::__function::__func<QuantLib::FdmCellAveragingInnerValue::FdmCellAveragingInnerValue(boost::shared_ptr<QuantLib::Payoff>, boost::shared_ptr<QuantLib::FdmMesher>, unsigned long, std::function<double (double)>)::'lambda'(double), double (double)>::operator()(double&&)  (in libQuantLib.0.dylib) + 0  [0x1051ccf28]
+                  +     !   :   | + 1 QuantLib::FdmCellAveragingInnerValue::innerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 72  [0x104ff41e8]
+                  +     !   :   | 2 QuantLib::FdmCellAveragingInnerValue::innerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 120,124  [0x104ff4218,0x104ff421c]
+                  +     !   :   1 QuantLib::FdmSnapshotCondition::applyTo(QuantLib::Array&, double) const  (in libQuantLib.0.dylib) + 84  [0x104ffc184]
+                  +     !   :     1 _platform_memmove  (in libsystem_platform.dylib) + 88  [0x18c7153b8]
+                  +     !   8 QuantLib::FiniteDifferenceModel<QuantLib::HundsdorferScheme>::rollbackImpl(QuantLib::Array&, double, double, unsigned long, QuantLib::StepCondition<QuantLib::Array> const*)  (in libQuantLib.0.dylib) + 396  [0x104fd2708]
+                  +     !     8 QuantLib::FdmStepConditionComposite::applyTo(QuantLib::Array&, double) const  (in libQuantLib.0.dylib) + 100  [0x104fff340]
+                  +     !       8 QuantLib::FdmStepConditionComposite::applyTo(QuantLib::Array&, double) const  (in libQuantLib.0.dylib) + 100  [0x104fff340]
+                  +     !         4 QuantLib::FdmAmericanStepCondition::applyTo(QuantLib::Array&, double) const  (in libQuantLib.0.dylib) + 268  [0x104fcb6f0]
+                  +     !         | 2 QuantLib::FdmCellAveragingInnerValue::innerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 96  [0x104ff4200]
+                  +     !         | + 2 std::__function::__func<QuantLib::FdmCellAveragingInnerValue::FdmCellAveragingInnerValue(boost::shared_ptr<QuantLib::Payoff>, boost::shared_ptr<QuantLib::FdmMesher>, unsigned long, std::function<double (double)>)::'lambda'(double), double (double)>::operator()(double&&)  (in libQuantLib.0.dylib) + 0  [0x1051ccf28]
+                  +     !         | 1 QuantLib::FdmCellAveragingInnerValue::innerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 72  [0x104ff41e8]
+                  +     !         | 1 QuantLib::FdmMesherComposite::location(QuantLib::FdmLinearOpIterator const&, unsigned long) const  (in libQuantLib.0.dylib) + 64  [0x104ff6f60]
+                  +     !         2 QuantLib::FdmAmericanStepCondition::applyTo(QuantLib::Array&, double) const  (in libQuantLib.0.dylib) + 332,344  [0x104fcb730,0x104fcb73c]
+                  +     !         2 QuantLib::FdmCellAveragingInnerValue::innerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 120  [0x104ff4218]
+                  +     23 QuantLib::Fdm2DimSolver::performCalculations() const  (in libQuantLib.0.dylib) + 520  [0x104fc1250]
+                  +       23 boost::detail::sp_if_not_array<QuantLib::BicubicSpline>::type boost::make_shared<QuantLib::BicubicSpline, std::__wrap_iter<double const*>, std::__wrap_iter<double const*>, std::__wrap_iter<double const*>, std::__wrap_iter<double const*>, QuantLib::Matrix&>(std::__wrap_iter<double const*>&&, std::__wrap_iter<double const*>&&, std::__wrap_iter<double const*>&&, std::__wrap_iter<double const*>&&, QuantLib::Matrix&)  (in libQuantLib.0.dylib) + 132  [0x104fc13a8]
+                  +         23 QuantLib::BicubicSpline::BicubicSpline<std::__wrap_iter<double const*>, std::__wrap_iter<double const*>, QuantLib::Matrix>(std::__wrap_iter<double const*> const&, std::__wrap_iter<double const*> const&, std::__wrap_iter<double const*> const&, std::__wrap_iter<double const*> const&, QuantLib::Matrix const&)  (in libQuantLib.0.dylib) + 104  [0x104fc224c]
+                  +           23 QuantLib::detail::BicubicSplineImpl<std::__wrap_iter<double const*>, std::__wrap_iter<double const*>, QuantLib::Matrix>::BicubicSplineImpl(std::__wrap_iter<double const*> const&, std::__wrap_iter<double const*> const&, std::__wrap_iter<double const*> const&, std::__wrap_iter<double const*> const&, QuantLib::Matrix const&)  (in libQuantLib.0.dylib) + 64  [0x104fc2334]
+                  +             22 QuantLib::detail::BicubicSplineImpl<std::__wrap_iter<double const*>, std::__wrap_iter<double const*>, QuantLib::Matrix>::calculate()  (in libQuantLib.0.dylib) + 148  [0x104fc2678]
+                  +             : 20 QuantLib::CubicInterpolation::CubicInterpolation<std::__wrap_iter<double const*>, double const*>(std::__wrap_iter<double const*> const&, std::__wrap_iter<double const*> const&, double const* const&, QuantLib::CubicInterpolation::DerivativeApprox, bool, QuantLib::CubicInterpolation::BoundaryCondition, double, QuantLib::CubicInterpolation::BoundaryCondition, double, bool)  (in libQuantLib.0.dylib) + 272  [0x104fc3288]
+                  +             : | 13 QuantLib::detail::CubicInterpolationImpl<std::__wrap_iter<double const*>, double const*>::update()  (in libQuantLib.0.dylib) + 5772,5916,...  [0x104fc4f38,0x104fc4fc8,...]
+                  +             : | 6 QuantLib::detail::CubicInterpolationImpl<std::__wrap_iter<double const*>, double const*>::update()  (in libQuantLib.0.dylib) + 1628  [0x104fc3f08]
+                  +             : | + 6 QuantLib::TridiagonalOperator::solveFor(QuantLib::Array const&, QuantLib::Array&) const  (in libQuantLib.0.dylib) + 152,168,...  [0x105015b24,0x105015b34,...]
+                  +             : | 1 QuantLib::detail::CubicInterpolationImpl<std::__wrap_iter<double const*>, double const*>::update()  (in libQuantLib.0.dylib) + 204  [0x104fc3978]
+                  +             : |   1 QuantLib::TridiagonalOperator::setMidRow(unsigned long, double, double, double)  (in libQuantLib.0.dylib) + 24  [0x104da87bc]
+                  +             : 2 QuantLib::CubicInterpolation::CubicInterpolation<std::__wrap_iter<double const*>, double const*>(std::__wrap_iter<double const*> const&, std::__wrap_iter<double const*> const&, double const* const&, QuantLib::CubicInterpolation::DerivativeApprox, bool, QuantLib::CubicInterpolation::BoundaryCondition, double, QuantLib::CubicInterpolation::BoundaryCondition, double, bool)  (in libQuantLib.0.dylib) + 144  [0x104fc3208]
+                  +             :   2 QuantLib::detail::CubicInterpolationImpl<std::__wrap_iter<double const*>, double const*>::CubicInterpolationImpl(std::__wrap_iter<double const*> const&, std::__wrap_iter<double const*> const&, double const* const&, QuantLib::CubicInterpolation::DerivativeApprox, bool, QuantLib::CubicInterpolation::BoundaryCondition, double, QuantLib::CubicInterpolation::BoundaryCondition, double)  (in libQuantLib.0.dylib) + 168  [0x104fc33a8]
+                  +             :     1 DYLD-STUB$$operator new[](unsigned long)  (in libQuantLib.0.dylib) + 4  [0x1052fa258]
+                  +             :     1 operator new(unsigned long)  (in libc++abi.dylib) + 52  [0x18c6c27e8]
+                  +             :       1 _xzm_xzone_malloc_freelist_outlined  (in libsystem_malloc.dylib) + 324  [0x18c52e7e4]
+                  +             :         1 _xzm_xzone_find_and_malloc_from_freelist_chunk  (in libsystem_malloc.dylib) + 336  [0x18c52f0cc]
+                  +             :           1 _xzm_xzone_malloc_from_freelist_chunk  (in libsystem_malloc.dylib) + 192  [0x18c52ec40]
+                  +             1 QuantLib::detail::BicubicSplineImpl<std::__wrap_iter<double const*>, std::__wrap_iter<double const*>, QuantLib::Matrix>::calculate()  (in libQuantLib.0.dylib) + 48  [0x104fc2614]
+                  +               1 std::vector<QuantLib::Interpolation>::__append(unsigned long)  (in libQuantLib.0.dylib) + 168  [0x104da55ec]
+                  +                 1 <deduplicated_symbol>  (in libQuantLib.0.dylib) + 48  [0x104d2f3e0]
+                  +                   1 operator new(unsigned long)  (in libc++abi.dylib) + 52  [0x18c6c27e8]
+                  +                     1 _xzm_xzone_malloc_tiny  (in libsystem_malloc.dylib) + 116  [0x18c52cfb0]
+                  146 QuantLib::FdSabrVanillaEngine::calculate() const  (in libQuantLib.0.dylib) + 1516  [0x1051d7cc4]
+                  + 146 boost::detail::sp_if_not_array<QuantLib::FdmSabrOp>::type boost::make_shared<QuantLib::FdmSabrOp, boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure> const&, double const&, double const&, double const&, double const&, double const&>(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure> const&, double const&, double const&, double const&, double const&, double const&)  (in libQuantLib.0.dylib) + 188  [0x1051d88a4]
+                  +   24 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 752  [0x104ff8950]
+                  +   ! 14 QuantLib::SecondOrderMixedDerivativeOp::SecondOrderMixedDerivativeOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 60  [0x10501253c]
+                  +   ! : 8 QuantLib::NinePointLinearOp::NinePointLinearOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 1168,1372,...  [0x10500ec74,0x10500ed40,...]
+                  +   ! : 2 QuantLib::NinePointLinearOp::NinePointLinearOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 1160  [0x10500ec6c]
+                  +   ! : | 2 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int) const  (in libQuantLib.0.dylib) + 16,64  [0x104ff547c,0x104ff54ac]
+                  +   ! : 1 QuantLib::NinePointLinearOp::NinePointLinearOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 1120  [0x10500ec44]
+                  +   ! : | 1 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int) const  (in libQuantLib.0.dylib) + 64  [0x104ff54ac]
+                  +   ! : 1 QuantLib::NinePointLinearOp::NinePointLinearOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 1328  [0x10500ed14]
+                  +   ! : | 1 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int, unsigned long, int) const  (in libQuantLib.0.dylib) + 72  [0x104ff5504]
+                  +   ! : 1 QuantLib::NinePointLinearOp::NinePointLinearOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 1372  [0x10500ed40]
+                  +   ! : | 1 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int, unsigned long, int) const  (in libQuantLib.0.dylib) + 72  [0x104ff5504]
+                  +   ! : 1 QuantLib::NinePointLinearOp::NinePointLinearOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 1416  [0x10500ed6c]
+                  +   ! :   1 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int, unsigned long, int) const  (in libQuantLib.0.dylib) + 72  [0x104ff5504]
+                  +   ! 3 QuantLib::FdmMesherComposite::dplus(QuantLib::FdmLinearOpIterator const&, unsigned long) const  (in libQuantLib.0.dylib) + 64  [0x104ff6e80]
+                  +   ! 3 QuantLib::SecondOrderMixedDerivativeOp::SecondOrderMixedDerivativeOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 384  [0x105012680]
+                  +   ! : 3 QuantLib::SecondOrderMixedDerivativeOp::SecondOrderMixedDerivativeOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 764,852,...  [0x1050127fc,0x105012854,...]
+                  +   ! 2 QuantLib::FdmMesherComposite::dminus(QuantLib::FdmLinearOpIterator const&, unsigned long) const  (in libQuantLib.0.dylib) + 64,68  [0x104ff6ef0,0x104ff6ef4]
+                  +   ! 1 QuantLib::SecondOrderMixedDerivativeOp::SecondOrderMixedDerivativeOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 288  [0x105012620]
+                  +   ! : 1 QuantLib::SecondOrderMixedDerivativeOp::SecondOrderMixedDerivativeOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 292  [0x105012624]
+                  +   ! 1 QuantLib::SecondOrderMixedDerivativeOp::SecondOrderMixedDerivativeOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 320  [0x105012640]
+                  +   !   1 QuantLib::FdmMesherComposite::dplus(QuantLib::FdmLinearOpIterator const&, unsigned long) const  (in libQuantLib.0.dylib) + 32  [0x104ff6e60]
+                  +   16 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 964  [0x104ff8a24]
+                  +   ! 10 QuantLib::NinePointLinearOp::mult(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 44  [0x105010a7c]
+                  +   ! : 3 QuantLib::NinePointLinearOp::NinePointLinearOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 1328  [0x10500ed14]
+                  +   ! : | 3 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int, unsigned long, int) const  (in libQuantLib.0.dylib) + 12,72  [0x104ff54c8,0x104ff5504]
+                  +   ! : 3 QuantLib::NinePointLinearOp::NinePointLinearOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 1088,1328,...  [0x10500ec24,0x10500ed14,...]
+                  +   ! : 2 QuantLib::NinePointLinearOp::NinePointLinearOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 1416  [0x10500ed6c]
+                  +   ! : | 2 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int, unsigned long, int) const  (in libQuantLib.0.dylib) + 64,72  [0x104ff54fc,0x104ff5504]
+                  +   ! : 1 QuantLib::NinePointLinearOp::NinePointLinearOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 1120  [0x10500ec44]
+                  +   ! : | 1 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int) const  (in libQuantLib.0.dylib) + 16  [0x104ff547c]
+                  +   ! : 1 QuantLib::NinePointLinearOp::NinePointLinearOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 1200  [0x10500ec94]
+                  +   ! :   1 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int) const  (in libQuantLib.0.dylib) + 64  [0x104ff54ac]
+                  +   ! 6 QuantLib::NinePointLinearOp::mult(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 192,152,...  [0x105010b10,0x105010ae8,...]
+                  +   12 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 920  [0x104ff89f8]
+                  +   ! 12 pow  (in libsystem_m.dylib) + 176,20,...  [0x19c4c40b0,0x19c4c4014,...]
+                  +   12 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 1084  [0x104ff8a9c]
+                  +   ! 6 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 996,816,...  [0x1050169ac,0x1050168f8,...]
+                  +   ! 4 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 848  [0x105016918]
+                  +   ! : 4 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int) const  (in libQuantLib.0.dylib) + 64,76  [0x104ff54ac,0x104ff54b8]
+                  +   ! 2 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 888  [0x105016940]
+                  +   !   2 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int) const  (in libQuantLib.0.dylib) + 16  [0x104ff547c]
+                  +   11 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 296  [0x104ff8788]
+                  +   ! 11 pow  (in libsystem_m.dylib) + 236,260,...  [0x19c4c40ec,0x19c4c4104,...]
+                  +   11 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 708  [0x104ff8924]
+                  +   ! 8 QuantLib::TripleBandLinearOp::mult(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 44  [0x105017754]
+                  +   ! : 5 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 856,864,...  [0x105016920,0x105016928,...]
+                  +   ! : 2 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 888  [0x105016940]
+                  +   ! : | 2 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int) const  (in libQuantLib.0.dylib) + 16,64  [0x104ff547c,0x104ff54ac]
+                  +   ! : 1 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 848  [0x105016918]
+                  +   ! :   1 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int) const  (in libQuantLib.0.dylib) + 16  [0x104ff547c]
+                  +   ! 3 QuantLib::TripleBandLinearOp::mult(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 128  [0x1050177a8]
+                  +   8 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 444  [0x104ff881c]
+                  +   ! 4 QuantLib::FirstDerivativeOp::FirstDerivativeOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 56  [0x105001cec]
+                  +   ! : 4 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 896,924,...  [0x105016948,0x105016964,...]
+                  +   ! 2 QuantLib::FirstDerivativeOp::FirstDerivativeOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 260  [0x105001db8]
+                  +   ! : 2 QuantLib::FirstDerivativeOp::FirstDerivativeOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 264  [0x105001dbc]
+                  +   ! 2 QuantLib::FirstDerivativeOp::FirstDerivativeOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 292  [0x105001dd8]
+                  +   !   2 QuantLib::FirstDerivativeOp::FirstDerivativeOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 232,312  [0x105001d9c,0x105001dec]
+                  +   7 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 596  [0x104ff88b4]
+                  +   ! 3 QuantLib::SecondDerivativeOp::SecondDerivativeOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 296  [0x10501230c]
+                  +   ! : 3 QuantLib::SecondDerivativeOp::SecondDerivativeOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 440,236  [0x10501239c,0x1050122d0]
+                  +   ! 2 QuantLib::FdmMesherComposite::dplus(QuantLib::FdmLinearOpIterator const&, unsigned long) const  (in libQuantLib.0.dylib) + 64  [0x104ff6e80]
+                  +   ! 2 QuantLib::SecondDerivativeOp::SecondDerivativeOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 264  [0x1050122ec]
+                  +   !   2 QuantLib::SecondDerivativeOp::SecondDerivativeOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 268,284  [0x1050122f0,0x105012300]
+                  +   7 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 888  [0x104ff89d8]
+                  +   ! 7 QuantLib::FdmMesherComposite::locations(unsigned long) const  (in libQuantLib.0.dylib) + 240,304,...  [0x104ff7080,0x104ff70c0,...]
+                  +   6 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 96  [0x104ff86c0]
+                  +   ! 5 QuantLib::SecondDerivativeOp::SecondDerivativeOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 56  [0x10501221c]
+                  +   ! : 3 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 816,864,...  [0x1050168f8,0x105016928,...]
+                  +   ! : 1 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 848  [0x105016918]
+                  +   ! : | 1 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int) const  (in libQuantLib.0.dylib) + 16  [0x104ff547c]
+                  +   ! : 1 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 888  [0x105016940]
+                  +   ! :   1 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int) const  (in libQuantLib.0.dylib) + 16  [0x104ff547c]
+                  +   ! 1 QuantLib::SecondDerivativeOp::SecondDerivativeOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 296  [0x10501230c]
+                  +   !   1 QuantLib::SecondDerivativeOp::SecondDerivativeOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 336  [0x105012334]
+                  +   6 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 556  [0x104ff888c]
+                  +   ! 5 QuantLib::TripleBandLinearOp::mult(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 44  [0x105017754]
+                  +   ! : 2 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 888  [0x105016940]
+                  +   ! : | 2 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int) const  (in libQuantLib.0.dylib) + 64,76  [0x104ff54ac,0x104ff54b8]
+                  +   ! : 2 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 864,924  [0x105016928,0x105016964]
+                  +   ! : 1 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 848  [0x105016918]
+                  +   ! :   1 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int) const  (in libQuantLib.0.dylib) + 16  [0x104ff547c]
+                  +   ! 1 QuantLib::TripleBandLinearOp::mult(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 128  [0x1050177a8]
+                  +   5 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 180  [0x104ff8714]
+                  +   ! 4 exp  (in libsystem_m.dylib) + 104,44,...  [0x19c4c0428,0x19c4c03ec,...]
+                  +   ! 1 DYLD-STUB$$exp  (in libQuantLib.0.dylib) + 4  [0x1052fa3d8]
+                  +   5 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 844,172,...  [0x104ff89ac,0x104ff870c,...]
+                  +   4 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 260  [0x104ff8764]
+                  +   ! 4 QuantLib::FdmMesherComposite::locations(unsigned long) const  (in libQuantLib.0.dylib) + 328,276,...  [0x104ff70d8,0x104ff70a4,...]
+                  +   2 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 340  [0x104ff87b4]
+                  +   ! 2 QuantLib::TripleBandLinearOp::mult(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 44  [0x105017754]
+                  +   !   1 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 888  [0x105016940]
+                  +   !   : 1 QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int) const  (in libQuantLib.0.dylib) + 16  [0x104ff547c]
+                  +   !   1 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 816  [0x1050168f8]
+                  +   2 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 1068  [0x104ff8a8c]
+                  +   ! 2 QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 924  [0x105016964]
+                  +   2 pow  (in libsystem_m.dylib) + 520  [0x19c4c4208]
+                  +   1 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 124  [0x104ff86dc]
+                  +   ! 1 QuantLib::FdmMesherComposite::locations(unsigned long) const  (in libQuantLib.0.dylib) + 240  [0x104ff7080]
+                  +   1 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 324  [0x104ff87a4]
+                  +   ! 1 QuantLib::operator*(QuantLib::Array&&, QuantLib::Array&&)  (in libQuantLib.0.dylib) + 88  [0x104df5d34]
+                  +   1 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 780  [0x104ff896c]
+                  +   ! 1 QuantLib::FdmMesherComposite::locations(unsigned long) const  (in libQuantLib.0.dylib) + 276  [0x104ff70a4]
+                  +   1 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 812  [0x104ff898c]
+                  +   ! 1 exp  (in libsystem_m.dylib) + 104  [0x19c4c0428]
+                  +   1 QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib) + 948  [0x104ff8a14]
+                  +   ! 1 QuantLib::operator*(QuantLib::Array&&, QuantLib::Array&&)  (in libQuantLib.0.dylib) + 88  [0x104df5d34]
+                  +   1 exp  (in libsystem_m.dylib) + 152  [0x19c4c0458]
+                  15 QuantLib::FdSabrVanillaEngine::calculate() const  (in libQuantLib.0.dylib) + 1548  [0x1051d7ce4]
+                  + 15 boost::detail::sp_if_not_array<QuantLib::Fdm2DimSolver>::type boost::make_shared<QuantLib::Fdm2DimSolver, QuantLib::FdmSolverDesc const&, QuantLib::FdmSchemeDesc const&, boost::shared_ptr<QuantLib::FdmLinearOpComposite> const&>(QuantLib::FdmSolverDesc const&, QuantLib::FdmSchemeDesc const&, boost::shared_ptr<QuantLib::FdmLinearOpComposite> const&)  (in libQuantLib.0.dylib) + 152  [0x1051d8a30]
+                  +   11 QuantLib::Fdm2DimSolver::Fdm2DimSolver(QuantLib::FdmSolverDesc const&, QuantLib::FdmSchemeDesc const&, boost::shared_ptr<QuantLib::FdmLinearOpComposite>)  (in libQuantLib.0.dylib) + 780  [0x104fc0bf8]
+                  +   ! 9 QuantLib::FdmCellAveragingInnerValue::avgInnerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 252  [0x104ff4374]
+                  +   ! : 9 QuantLib::FdmCellAveragingInnerValue::avgInnerValueCalc(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 460  [0x104ff46c0]
+                  +   ! :   8 QuantLib::SimpsonIntegral::integrate(std::function<double (double)> const&, double, double) const  (in libQuantLib.0.dylib) + 196  [0x104e6be5c]
+                  +   ! :   | 4 QuantLib::Default::integrate(std::function<double (double)> const&, double, double, double, unsigned long)  (in libQuantLib.0.dylib) + 120,72  [0x104e6c068,0x104e6c038]
+                  +   ! :   | 3 QuantLib::Default::integrate(std::function<double (double)> const&, double, double, double, unsigned long)  (in libQuantLib.0.dylib) + 96  [0x104e6c050]
+                  +   ! :   | + 2 QuantLib::(anonymous namespace)::mapped_payoff::operator()(double) const  (in libQuantLib.0.dylib) + 36,52  [0x104ff48f8,0x104ff4908]
+                  +   ! :   | + 1 QuantLib::PlainVanillaPayoff::operator()(double) const  (in libQuantLib.0.dylib) + 80  [0x104f289fc]
+                  +   ! :   | 1 QuantLib::(anonymous namespace)::mapped_payoff::operator()(double) const  (in libQuantLib.0.dylib) + 68  [0x104ff4918]
+                  +   ! :   1 QuantLib::SimpsonIntegral::integrate(std::function<double (double)> const&, double, double) const  (in libQuantLib.0.dylib) + 84  [0x104e6bdec]
+                  +   ! :     1 QuantLib::PlainVanillaPayoff::operator()(double) const  (in libQuantLib.0.dylib) + 80  [0x104f289fc]
+                  +   ! 2 QuantLib::FdmCellAveragingInnerValue::avgInnerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 224,304  [0x104ff4358,0x104ff43a8]
+                  +   2 QuantLib::FdmCellAveragingInnerValue::avgInnerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 416  [0x104ff4418]
+                  +   1 QuantLib::Fdm2DimSolver::Fdm2DimSolver(QuantLib::FdmSolverDesc const&, QuantLib::FdmSchemeDesc const&, boost::shared_ptr<QuantLib::FdmLinearOpComposite>)  (in libQuantLib.0.dylib) + 376  [0x104fc0a64]
+                  +   ! 1 boost::detail::sp_if_not_array<QuantLib::FdmSnapshotCondition>::type boost::make_shared<QuantLib::FdmSnapshotCondition, double>(double&&)  (in libQuantLib.0.dylib) + 48  [0x104fb74e8]
+                  +   !   1 boost::detail::shared_count::shared_count<QuantLib::FdmSnapshotCondition*, boost::detail::sp_ms_deleter<QuantLib::FdmSnapshotCondition>>(QuantLib::FdmSnapshotCondition*, boost::detail::sp_inplace_tag<boost::detail::sp_ms_deleter<QuantLib::FdmSnapshotCondition>>)  (in libQuantLib.0.dylib) + 32  [0x104fb8540]
+                  +   !     1 operator new(unsigned long)  (in libc++abi.dylib) + 52  [0x18c6c27e8]
+                  +   !       1 _xzm_xzone_malloc_freelist_outlined  (in libsystem_malloc.dylib) + 324  [0x18c52e7e4]
+                  +   !         1 _xzm_xzone_find_and_malloc_from_freelist_chunk  (in libsystem_malloc.dylib) + 0  [0x18c52ef7c]
+                  +   1 QuantLib::Fdm2DimSolver::Fdm2DimSolver(QuantLib::FdmSolverDesc const&, QuantLib::FdmSchemeDesc const&, boost::shared_ptr<QuantLib::FdmLinearOpComposite>)  (in libQuantLib.0.dylib) + 852  [0x104fc0c40]
+                  4 QuantLib::FdSabrVanillaEngine::calculate() const  (in libQuantLib.0.dylib) + 716  [0x1051d79a4]
+                    4 boost::detail::sp_if_not_array<QuantLib::FdmDiscountDirichletBoundary>::type boost::make_shared<QuantLib::FdmDiscountDirichletBoundary, boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure> const&, double const&, double, int, QuantLib::BoundaryCondition<QuantLib::FdmLinearOp>::Side>(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure> const&, double const&, double&&, int&&, QuantLib::BoundaryCondition<QuantLib::FdmLinearOp>::Side&&)  (in libQuantLib.0.dylib) + 144  [0x1051d874c]
+                      4 QuantLib::FdmDiscountDirichletBoundary::FdmDiscountDirichletBoundary(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure> const&, double, double, unsigned long, QuantLib::BoundaryCondition<QuantLib::FdmLinearOp>::Side)  (in libQuantLib.0.dylib) + 204  [0x104fe2cc4]
+                        4 boost::detail::sp_if_not_array<QuantLib::FdmTimeDepDirichletBoundary>::type boost::make_shared<QuantLib::FdmTimeDepDirichletBoundary, boost::shared_ptr<QuantLib::FdmMesher> const&, std::function<double (double)>, unsigned long&, QuantLib::BoundaryCondition<QuantLib::FdmLinearOp>::Side&>(boost::shared_ptr<QuantLib::FdmMesher> const&, std::function<double (double)>&&, unsigned long&, QuantLib::BoundaryCondition<QuantLib::FdmLinearOp>::Side&)  (in libQuantLib.0.dylib) + 164  [0x104fe2eb0]
+                          4 QuantLib::FdmTimeDepDirichletBoundary::FdmTimeDepDirichletBoundary(boost::shared_ptr<QuantLib::FdmMesher> const&, std::function<double (double)>, unsigned long, QuantLib::BoundaryCondition<QuantLib::FdmLinearOp>::Side)  (in libQuantLib.0.dylib) + 84  [0x1050009c4]
+                            4 QuantLib::FdmIndicesOnBoundary::FdmIndicesOnBoundary(boost::shared_ptr<QuantLib::FdmLinearOpLayout> const&, unsigned long, QuantLib::BoundaryCondition<QuantLib::FdmLinearOp>::Side)  (in libQuantLib.0.dylib) + 456,316,...  [0x104ff3edc,0x104ff3e50,...]
+
+Total number in stack (recursive counted multiple, when >=5):
+        16       QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 0  [0x105017b78]
+        13       QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int) const  (in libQuantLib.0.dylib) + 0  [0x104ff546c]
+        9       operator new(unsigned long)  (in libc++abi.dylib) + 52  [0x18c6c27e8]
+        7       QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 0  [0x1050165c8]
+        6       QuantLib::FdmCellAveragingInnerValue::innerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib) + 0  [0x104ff41a0]
+        6       QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 92  [0x104ff8fd4]
+        6       QuantLib::FdmStepConditionComposite::applyTo(QuantLib::Array&, double) const  (in libQuantLib.0.dylib) + 100  [0x104fff340]
+        6       QuantLib::NinePointLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 0  [0x10501048c]
+        6       QuantLib::TripleBandLinearOp::solve_splitting(QuantLib::Array const&, double, double) const  (in libQuantLib.0.dylib) + 0  [0x105017fa4]
+        5       QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int, unsigned long, int) const  (in libQuantLib.0.dylib) + 0  [0x104ff54bc]
+        5       QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 44  [0x104ff8fa4]
+        5       QuantLib::FdmSabrOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib) + 60  [0x104ff8fb4]
+        5       QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib) + 888  [0x105016940]
+        5       QuantLib::TripleBandLinearOp::axpyb(QuantLib::Array const&, QuantLib::TripleBandLinearOp const&, QuantLib::TripleBandLinearOp const&, QuantLib::Array const&)  (in libQuantLib.0.dylib) + 0  [0x105017410]
+        5       QuantLib::operator+(QuantLib::Array&&, QuantLib::Array&&)  (in libQuantLib.0.dylib) + 0  [0x104df0878]
+        5       _xzm_malloc_large_huge  (in libsystem_malloc.dylib) + 464  [0x18c527458]
+
+Sort by top of stack, same collapsed (when >= 5):
+        QuantLib::NinePointLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib)        2861
+        QuantLib::TripleBandLinearOp::solve_splitting(QuantLib::Array const&, double, double) const  (in libQuantLib.0.dylib)        2857
+        QuantLib::TripleBandLinearOp::apply(QuantLib::Array const&) const  (in libQuantLib.0.dylib)        1161
+        QuantLib::TripleBandLinearOp::axpyb(QuantLib::Array const&, QuantLib::TripleBandLinearOp const&, QuantLib::TripleBandLinearOp const&, QuantLib::Array const&)  (in libQuantLib.0.dylib)        221
+        QuantLib::FdmCellAveragingInnerValue::innerValue(QuantLib::FdmLinearOpIterator const&, double)  (in libQuantLib.0.dylib)        131
+        QuantLib::HundsdorferScheme::step(QuantLib::Array&, double)  (in libQuantLib.0.dylib)        120
+        QuantLib::FdmAmericanStepCondition::applyTo(QuantLib::Array&, double) const  (in libQuantLib.0.dylib)        105
+        QuantLib::operator+(QuantLib::Array&&, QuantLib::Array&&)  (in libQuantLib.0.dylib)        103
+        QuantLib::operator-(QuantLib::Array const&, QuantLib::Array&&)  (in libQuantLib.0.dylib)        99
+        QuantLib::FdmMesherComposite::location(QuantLib::FdmLinearOpIterator const&, unsigned long) const  (in libQuantLib.0.dylib)        68
+        QuantLib::operator+(QuantLib::Array const&, QuantLib::Array&&)  (in libQuantLib.0.dylib)        61
+        QuantLib::PlainVanillaPayoff::operator()(double) const  (in libQuantLib.0.dylib)        36
+        pow  (in libsystem_m.dylib)        25
+        std::__function::__func<QuantLib::FdmCellAveragingInnerValue::FdmCellAveragingInnerValue(boost::shared_ptr<QuantLib::Payoff>, boost::shared_ptr<QuantLib::FdmMesher>, unsigned long, std::function<double (double)>)::'lambda'(double), double (double)>::operator()(double&&)  (in libQuantLib.0.dylib)        25
+        QuantLib::TripleBandLinearOp::TripleBandLinearOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib)        23
+        QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int) const  (in libQuantLib.0.dylib)        20
+        QuantLib::FdmMesherComposite::locations(unsigned long) const  (in libQuantLib.0.dylib)        13
+        QuantLib::detail::CubicInterpolationImpl<std::__wrap_iter<double const*>, double const*>::update()  (in libQuantLib.0.dylib)        13
+        QuantLib::NinePointLinearOp::NinePointLinearOp(unsigned long, unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib)        11
+        _platform_memmove  (in libsystem_platform.dylib)        11
+        QuantLib::FdmLinearOpLayout::neighbourhood(QuantLib::FdmLinearOpIterator const&, unsigned long, int, unsigned long, int) const  (in libQuantLib.0.dylib)        8
+        QuantLib::operator-(QuantLib::Array const&, QuantLib::Array const&)  (in libQuantLib.0.dylib)        8
+        QuantLib::FdmMesherComposite::dplus(QuantLib::FdmLinearOpIterator const&, unsigned long) const  (in libQuantLib.0.dylib)        6
+        QuantLib::NinePointLinearOp::mult(QuantLib::Array const&) const  (in libQuantLib.0.dylib)        6
+        QuantLib::SecondDerivativeOp::SecondDerivativeOp(unsigned long, boost::shared_ptr<QuantLib::FdmMesher> const&)  (in libQuantLib.0.dylib)        6
+        QuantLib::TridiagonalOperator::solveFor(QuantLib::Array const&, QuantLib::Array&) const  (in libQuantLib.0.dylib)        6
+        exp  (in libsystem_m.dylib)        6
+        QuantLib::FdmSabrOp::FdmSabrOp(boost::shared_ptr<QuantLib::FdmMesher> const&, boost::shared_ptr<QuantLib::YieldTermStructure>, double, double, double, double, double)  (in libQuantLib.0.dylib)        5
+
+Binary Images:
+       0x102cb8000 -        0x102cbea6b +quantlib_timing (0) <981CCD24-AC88-3F32-9090-5546E4B75545> /Users/*/quantlib_timing
+       0x104cb8000 -        0x1060c104f +libQuantLib.0.dylib (0) <2352272B-BCDB-326C-8A48-218952F60D31> /opt/homebrew/*/libQuantLib.0.dylib
+       0x18c298000 -        0x18c2eab4b  libobjc.A.dylib (951.7) <03BD9E32-CF0A-37B0-898A-3CE8DE06D842> /usr/lib/libobjc.A.dylib
+       0x18c2eb000 -        0x18c31fd58  libdyld.dylib (1387) <957F93B3-8805-39C7-9C51-EDD1715F550E> /usr/lib/system/libdyld.dylib
+       0x18c320000 -        0x18c3d34ff  dyld (1.0.0 - 1387) <74E52480-C2BD-3C8D-812D-95FE2B74A096> /usr/lib/dyld
+       0x18c3d4000 -        0x18c3d7228  libsystem_blocks.dylib (96) <E0AC1231-27AA-3A13-8FAC-41D5802B1F3C> /usr/lib/system/libsystem_blocks.dylib
+       0x18c3d8000 -        0x18c42c55f  libxpc.dylib (3102.160.5) <33E44C2D-D65E-37A6-B85F-1A4CF524A050> /usr/lib/system/libxpc.dylib
+       0x18c42d000 -        0x18c44d9ff  libsystem_trace.dylib (1861.160.4) <93F1DD8C-6CD9-32B9-B222-D23DA5D161B4> /usr/lib/system/libsystem_trace.dylib
+       0x18c44e000 -        0x18c4fc5f7  libcorecrypto.dylib (1922.160.10) <0642DDAD-4771-3C82-805C-E7C6701C1461> /usr/lib/system/libcorecrypto.dylib
+       0x18c4fd000 -        0x18c54d257  libsystem_malloc.dylib (812.160.5) <D969A907-3E43-3951-9365-8C2DB3812E9D> /usr/lib/system/libsystem_malloc.dylib
+       0x18c54e000 -        0x18c59523f  libdispatch.dylib (1542.160.2) <B2000CD5-F580-314A-A141-E036719D854E> /usr/lib/system/libdispatch.dylib
+       0x18c596000 -        0x18c598ffb  libsystem_featureflags.dylib (103) <FEE12F9C-344B-33B3-8EDD-283580EF1C67> /usr/lib/system/libsystem_featureflags.dylib
+       0x18c599000 -        0x18c61a1e7  libsystem_c.dylib (1752.160.4) <D77CEB62-AFF6-3CEC-BA9B-4F057FBE2EB5> /usr/lib/system/libsystem_c.dylib
+       0x18c61b000 -        0x18c6abae7  libc++.1.dylib (2100.43) <F0FD393C-15BC-3C75-A19D-897F7B225C78> /usr/lib/libc++.1.dylib
+       0x18c6ac000 -        0x18c6c675f  libc++abi.dylib (2100.43) <F38A9C58-22AB-3798-BBAE-8DCD9CC0CE27> /usr/lib/libc++abi.dylib
+       0x18c6c7000 -        0x18c7042e7  libsystem_kernel.dylib (12377.161.14) <C6A4A4CB-92E6-3BAF-AAE0-E8306259209A> /usr/lib/system/libsystem_kernel.dylib
+       0x18c705000 -        0x18c711b3b  libsystem_pthread.dylib (539.100.4) <A373F0B0-9880-326A-88B4-DD8BE4E33072> /usr/lib/system/libsystem_pthread.dylib
+       0x18c712000 -        0x18c71a963  libsystem_platform.dylib (375.120.2) <EDB83A19-EC17-32DE-9350-6145970A85D6> /usr/lib/system/libsystem_platform.dylib
+       0x18c71b000 -        0x18c74a6eb  libsystem_info.dylib (600) <9B5FB84B-31AD-3EA7-8F89-8C700D369DC8> /usr/lib/system/libsystem_info.dylib
+       0x1906e8000 -        0x1906f1e5f  libsystem_darwin.dylib (1752.160.4) <8E07D22E-CE5A-38A0-B091-5B0338C326F5> /usr/lib/system/libsystem_darwin.dylib
+       0x190b53000 -        0x190b651b6  libsystem_notify.dylib (348.160.3) <15799128-6CBD-30D6-A2BB-B9D02B4470C0> /usr/lib/system/libsystem_notify.dylib
+       0x192e24000 -        0x192e3ef7b  libsystem_networkextension.dylib (2226.161.1) <9C7B1EEB-47BE-3791-93A9-CFC693CB9417> /usr/lib/system/libsystem_networkextension.dylib
+       0x192ec1000 -        0x192ed8fdf  libsystem_asl.dylib (406) <54439739-33EE-3273-839F-CBA67D7F5CB1> /usr/lib/system/libsystem_asl.dylib
+       0x194a7a000 -        0x194a82387  libsystem_symptoms.dylib (2169.160.3) <229122B9-B8B1-3F2F-870E-8650AE3C4FB5> /usr/lib/system/libsystem_symptoms.dylib
+       0x198d1f000 -        0x198d575b7  libsystem_containermanager.dylib (725.160.3) <14B2A47F-19C8-392F-8FDB-FE8AE375DD41> /usr/lib/system/libsystem_containermanager.dylib
+       0x19a131000 -        0x19a1355d7  libsystem_configuration.dylib (1405.160.3) <D8D6280B-783D-3550-BDBA-2861AE40604F> /usr/lib/system/libsystem_configuration.dylib
+       0x19a136000 -        0x19a13c99f  libsystem_sandbox.dylib (2680.160.6) <54688162-B50D-3D31-A1E8-7B9766D3530D> /usr/lib/system/libsystem_sandbox.dylib
+       0x19b791000 -        0x19b7941fb  libquarantine.dylib (196.160.2) <EEE5AADB-52E1-3C4C-881A-70405770B1F1> /usr/lib/system/libquarantine.dylib
+       0x19bf30000 -        0x19bf36d03  libsystem_coreservices.dylib (191.5.1) <D4ACD2AC-5702-3C45-85A0-300B2C2D19E1> /usr/lib/system/libsystem_coreservices.dylib
+       0x19c4bf000 -        0x19c4fca77  libsystem_m.dylib (3312.100.1) <B54FBE99-DB0B-32C7-ABDD-C2206DF606A4> /usr/lib/system/libsystem_m.dylib
+       0x19c4fe000 -        0x19c501527  libmacho.dylib (1387) <949131E5-BDA2-39BA-AA50-62651BB51802> /usr/lib/system/libmacho.dylib
+       0x19c51b000 -        0x19c5283a7  libcommonCrypto.dylib (600035) <3B110564-5278-3CB0-85F1-2CE8431FF935> /usr/lib/system/libcommonCrypto.dylib
+       0x19c529000 -        0x19c532ca3  libunwind.dylib (2100.2) <05FD0014-55B1-3B8A-A6BA-6C7A389C4123> /usr/lib/system/libunwind.dylib
+       0x19c53b000 -        0x19c545bef  libcopyfile.dylib (240.160.2.0.1) <D0009B8A-8ECC-3D56-9206-7E1839707F93> /usr/lib/system/libcopyfile.dylib
+       0x19c546000 -        0x19c549987  libcompiler_rt.dylib (103.3) <6FB345CA-7F5C-3263-A23F-143F7539FD8A> /usr/lib/system/libcompiler_rt.dylib
+       0x19c54a000 -        0x19c54e78b  libsystem_collections.dylib (1752.160.4) <C8160BD2-5941-3DC0-BB40-F8C2B8156EC4> /usr/lib/system/libsystem_collections.dylib
+       0x19c54f000 -        0x19c5524cf  libsystem_secinit.dylib (168.100.7) <ECABC024-8F02-374A-BB7E-29437CEA2ABD> /usr/lib/system/libsystem_secinit.dylib
+       0x19c553000 -        0x19c555bf7  libremovefile.dylib (85.100.6) <7460B5AE-469A-36A0-A7EC-6C7D69628E86> /usr/lib/system/libremovefile.dylib
+       0x19c556000 -        0x19c556f27  libkeymgr.dylib (31) <7E863FCA-F3FF-32C7-8A8C-F983E946AFC3> /usr/lib/system/libkeymgr.dylib
+       0x19c557000 -        0x19c55fe37  libsystem_dnssd.dylib (2881.160.4) <305F4398-E688-3384-B351-02D865EC8A04> /usr/lib/system/libsystem_dnssd.dylib
+       0x19c560000 -        0x19c56509b  libcache.dylib (95) <9CD7B1E1-3E47-339C-A193-2392E3E0ED23> /usr/lib/system/libcache.dylib
+       0x19c566000 -        0x19c567ce3  libSystem.B.dylib (1356) <4FED5EE2-5D3E-35B1-A170-9859C4B683BB> /usr/lib/libSystem.B.dylib
+       0x290529000 -        0x290530349  libRosetta.dylib (367.9) <0C7397C6-D747-31F2-8BC1-4096213BDE5C> /usr/lib/libRosetta.dylib
+       0x29213c000 -        0x29213fa4b  libsystem_darwindirectory.dylib (122) <971A4F65-493D-39F3-846D-0D33FA2769FD> /usr/lib/system/libsystem_darwindirectory.dylib
+       0x292140000 -        0x29214a39b  libsystem_eligibility.dylib (319.160.17) <750CA446-92EA-3A56-9A7B-CC0841686C50> /usr/lib/system/libsystem_eligibility.dylib
+       0x29214b000 -        0x29215288b  libsystem_sanitizers.dylib (26.1) <D88EC709-9AA8-3083-B22B-D3CB39678D71> /usr/lib/system/libsystem_sanitizers.dylib
+       0x292153000 -        0x292153bb7  libsystem_trial.dylib (474.2.18.2) <7194FF5B-A6C5-3D67-B00A-90209F10D603> /usr/lib/system/libsystem_trial.dylib

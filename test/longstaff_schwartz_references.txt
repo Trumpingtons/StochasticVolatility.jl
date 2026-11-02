@@ -1,0 +1,17 @@
+# Published prices of puts under Heston, for longstaff_schwartz_price. Rate and T are per year and in years; mu equals the rate.
+# Source of every value: Haentjens, T. and in 't Hout, K. J., ADI schemes for pricing American options under the Heston model, arXiv 1309.0110v1, Tables 2, 3 and 4. Read from those tables, not from the works they quote.
+# Rows with 64 steps, American: the row RK-IT of Tables 2 and 3, from Ikonen, S. and Toivanen, J. (2009), Operator splitting methods for pricing American options under stochastic volatility, Numerische Mathematik 113, 299-324.
+# Rows with 60 steps, Bermudan with 60 dates: the row FO of Table 4, from Fang, F. and Oosterlee, C. W. (2011), A Fourier-based valuation method for Bermudan and barrier options under Heston's model, SIAM Journal on Financial Mathematics 2, 439-463. S0 = 90 (9.9958) is left out: the published price lies below the 10 of exercising at time 0, which longstaff_schwartz_price allows.
+# S0 v0 kappa theta xi rho rate T K steps published
+8.0 0.0625 5.0 0.16 0.9 0.1 0.1 0.25 10.0 64 2.0000
+9.0 0.0625 5.0 0.16 0.9 0.1 0.1 0.25 10.0 64 1.1076
+10.0 0.0625 5.0 0.16 0.9 0.1 0.1 0.25 10.0 64 0.5199
+11.0 0.0625 5.0 0.16 0.9 0.1 0.1 0.25 10.0 64 0.2135
+12.0 0.0625 5.0 0.16 0.9 0.1 0.1 0.25 10.0 64 0.0820
+8.0 0.25 5.0 0.16 0.9 0.1 0.1 0.25 10.0 64 2.0785
+9.0 0.25 5.0 0.16 0.9 0.1 0.1 0.25 10.0 64 1.3336
+10.0 0.25 5.0 0.16 0.9 0.1 0.1 0.25 10.0 64 0.7959
+11.0 0.25 5.0 0.16 0.9 0.1 0.1 0.25 10.0 64 0.4482
+12.0 0.25 5.0 0.16 0.9 0.1 0.1 0.25 10.0 64 0.2427
+100.0 0.0348 1.15 0.0348 0.39 -0.64 0.04 0.25 100.0 60 3.2079
+110.0 0.0348 1.15 0.0348 0.39 -0.64 0.04 0.25 100.0 60 0.9280

@@ -422,6 +422,23 @@ zscore(x, exact) = abs(mean(x) - exact) / (std(x) / sqrt(length(x)))
         @test maximum(last, differences) < 2e-6
     end
 
+    # Each spot comes from one simulation at S0 = K, by scaling the strike and the price.
+    @testset "Longstaff-Schwartz against published values" begin
+        rows = [parse.(Float64, split(line)) for line in eachline(joinpath(@__DIR__, "longstaff_schwartz_references.txt")) if !startswith(line, "#")]
+        largest = Dict(64.0 => 0.0, 60.0 => 0.0)
+        for parameters in unique(row[2:10] for row in rows)
+            v0, kappa, theta, xi, rho, rate, T, K, steps = parameters
+            selected = filter(row -> row[2:10] == parameters, rows)
+            model = Heston(K, v0, rate, kappa, theta, xi, rho)
+            results = longstaff_schwartz_price(model, K .* K ./ first.(selected), T; rate, call = false, paths = 131072, steps = Int(steps), numbers = QuasiRandom(seed = 20261101, replicates = 16))
+            for (row, result) in zip(selected, results)
+                largest[steps] = max(largest[steps], abs(result.price * row[1] / K - row[11]))
+            end
+        end
+        @test largest[64.0] < 0.005
+        @test largest[60.0] < 0.01
+    end
+
     @testset "Input validation" begin
         @test_throws ArgumentError realized_variance(Float64[])
         @test_throws ArgumentError realized_volatility(Float64[])

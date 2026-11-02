@@ -2,7 +2,7 @@
 
 julia_version = "1.13.1"
 manifest_format = "2.1"
-project_hash = "8d077c7d7e7799d3055440e229203bafd549ef0f"
+project_hash = "f0031a553c05cfed9343eafebac5586de4bb6178"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "bbc22a9a08a0ef6460041086d8a7b27940ed4ffd"
@@ -465,7 +465,7 @@ weakdeps = ["SparseArrays"]
     SparseArraysExt = ["SparseArrays"]
 
 [[deps.StochasticVolatility]]
-deps = ["ADTypes", "DifferentiationInterface", "ForwardDiff", "Optim", "QuadGK", "Random", "Sobol", "SpecialFunctions"]
+deps = ["ADTypes", "DifferentiationInterface", "ForwardDiff", "LinearAlgebra", "Optim", "QuadGK", "Random", "Sobol", "SpecialFunctions"]
 path = "."
 uuid = "c3f83b8a-3cc9-4a74-b44c-79f892b0a5a4"
 version = "0.1.0"

@@ -28,6 +28,7 @@ QuasiRandom
 ```@docs
 european_price
 monte_carlo_price
+longstaff_schwartz_price
 hagan_implied_vol
 hagan_price
 ```

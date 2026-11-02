@@ -6,6 +6,7 @@ include("Models.jl")
 include("RandomNumbers.jl")
 include("Simulation.jl")
 include("Pricing.jl")
+include("FiniteDifference.jl")
 
 export Heston,
        Bates,
@@ -20,6 +21,8 @@ export Heston,
        simulate_terminal,
        european_price,
        monte_carlo_price,
+       longstaff_schwartz_price,
+       finite_difference_price,
        hagan_implied_vol,
        hagan_price,
        bipower_variation,

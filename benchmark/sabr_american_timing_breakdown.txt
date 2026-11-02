@@ -1,0 +1,49 @@
+# Where the time goes, American options, F0 100, alpha 2, beta 0.5, rho -0.7, nu 0.8, T 0.25, rate 0.05, 400 x 50, one thread. Scripts in sv-references/pde/timing.
+# QuantLib 1.44 C++
+# Our finite_difference_price
+all_14 run 1 0.671 s
+all_14 run 2 0.656 s
+all_14 run 3 0.667 s
+one put K 50.0 0.0467 s
+one put K 75.0 0.0481 s
+one put K 95.0 0.0468 s
+one put K 100.0 0.0467 s
+one put K 105.0 0.0467 s
+one put K 125.0 0.0467 s
+one put K 200.0 0.0478 s
+one call K 50.0 0.0466 s
+one call K 75.0 0.0466 s
+one call K 95.0 0.0471 s
+one call K 100.0 0.0472 s
+one call K 105.0 0.0467 s
+one call K 125.0 0.0465 s
+one call K 200.0 0.0509 s
+put K 100, 1 steps 0.001 s
+put K 100, 2 steps 0.0017 s
+put K 100, 64 steps 0.055 s
+put K 100, 128 steps 0.0931 s
+# QuantLib 1.44 C++, run after the above
+all_14 run 1 3.068 s
+all_14 run 2 3.064 s
+all_14 run 3 3.070 s
+one put K 50 0.2197 s
+one put K 75 0.2191 s
+one put K 95 0.2186 s
+one put K 100 0.2181 s
+one put K 105 0.2185 s
+one put K 125 0.2186 s
+one put K 200 0.2180 s
+one call K 50 0.2193 s
+one call K 75 0.2190 s
+one call K 95 0.2188 s
+one call K 100 0.2184 s
+one call K 105 0.2188 s
+one call K 125 0.2186 s
+one call K 200 0.2189 s
+put K 100, 1 steps 0.0112 s
+put K 100, 2 steps 0.0147 s
+put K 100, 64 steps 0.2187 s
+put K 100, 128 steps 0.4283 s
+forward mesher alone, K 50 0.0000 s, from 56.8512 to 154.1614
+forward mesher alone, K 100 0.0000 s, from 56.8512 to 154.1614
+forward mesher alone, K 200 0.0000 s, from 56.8512 to 154.1614

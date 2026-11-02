@@ -1,0 +1,9 @@
+# American call under Bates, K 100, T 0.5 years, rate 0.03, dividend yield 0.05 (mu = -0.02), v0 0.04, kappa 2, theta 0.04, xi 0.25, rho -0.5, lambda 0.2, muJ -0.58, deltaJ 0.4.
+# Published: Toivanen (2010), grid (4096, 2048, 514), read second-hand from Section 5 of Salmi, Toivanen and von Sydow (2013). Finite differences: price points x variance points x steps, seconds for the 5 spots: 300x150x75 3.6 s, 600x300x150 11.3 s, 1200x600x300 129.4 s.
+# Longstaff-Schwartz, stored: pseudo 100000 paths 126 steps, pseudo 100000 paths 512 steps, quasi 98304 paths 126 steps, each with its standard error.
+# S0 published fd_300 fd_600 fd_1200 ls_pseudo_126 se ls_pseudo_512 se ls_quasi_126 se
+80.0 0.328526 0.336862 0.332788 0.330687 0.34109 0.00676 0.31766 0.0065 0.33142 0.00174
+90.0 2.109397 2.121665 2.115783 2.112723 2.09898 0.01559 2.07069 0.01527 2.09304 0.0033
+100.0 6.711622 6.719896 6.715916 6.713882 6.68395 0.02778 6.64988 0.02701 6.69703 0.00723
+110.0 13.749337 13.752321 13.749886 13.748658 13.73085 0.03987 13.6603 0.03795 13.70704 0.0085
+120.0 22.143307 22.14051 22.138758 22.137875 22.12137 0.04876 22.08655 0.04681 22.08472 0.01164

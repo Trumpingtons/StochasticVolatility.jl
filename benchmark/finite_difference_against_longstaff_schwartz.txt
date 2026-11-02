@@ -1,0 +1,12 @@
+# American put under Heston, kappa 5, theta 0.16, xi 0.9, rho 0.1, rate 0.1, T 0.25, K 10. Longstaff-Schwartz: stored in longstaff_schwartz_heston_published.txt, 131072 quasi-random paths, 64 dates. Finite differences: 300 x 150 mesh, 64 time steps.
+# v0 S0 longstaff_schwartz standard_error finite_difference gap gap_in_standard_errors
+0.0625 8.0 2.0 0.0 2.0 -0.0 exercise
+0.0625 9.0 1.1059 0.00059 1.10812 -0.00222 -3.79
+0.0625 10.0 0.52015 0.0006 0.52043 -0.00029 -0.48
+0.0625 11.0 0.21331 0.0004 0.2143 -0.00098 -2.46
+0.0625 12.0 0.08198 0.00031 0.08268 -0.00071 -2.28
+0.25 8.0 2.07544 0.00124 2.07879 -0.00335 -2.7
+0.25 9.0 1.32987 0.00071 1.33393 -0.00406 -5.74
+0.25 10.0 0.79658 0.00075 0.79621 0.00038 0.5
+0.25 11.0 0.44809 0.00045 0.44863 -0.00054 -1.19
+0.25 12.0 0.24207 0.00039 0.24331 -0.00124 -3.15

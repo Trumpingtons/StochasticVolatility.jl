@@ -1,0 +1,9 @@
+# longstaff_schwartz_price: American call under Bates, K 100.0, T 0.5 years, rate 0.03, dividend yield 0.05 (mu = -0.020000000000000004), v0 0.04, kappa 2.0, theta 0.04, xi 0.25, rho -0.5, lambda 0.2, gamma -0.5, deltaJ 0.4 (muJ = gamma - deltaJ^2 / 2 = -0.5800000000000001).
+# One simulation at spot 100.0, the other spots by homogeneity: 98304 paths, 126 steps and exercise dates (0.003968253968253968 years each), default scheme, QuasiRandom(0x00000000013528ed, 12), Julia 1.13.1, 10 threads, 7.141916459 seconds for the simulation and all 5 strikes.
+# Published: Toivanen, J. (2010), A componentwise splitting method for pricing American options under the Bates model, Comput. Methods Appl. Sci. 15, 213-227, grid (4096, 2048, 514), read second-hand from Section 5 of Salmi, Toivanen and von Sydow (2013), doi:10.1016/j.procs.2013.05.279. T and v0 = theta are read from that section's domain and evaluation points.
+# S0 price standard_error published price_minus_published gap_in_standard_errors
+80.0 0.3314181738821907 0.0017370221599945091 0.328526 0.0028921738821907073 1.6650184141576234
+90.0 2.0930358092422137 0.003296570174768752 2.109397 -0.016361190757786304 -4.963094941224483
+100.0 6.6970313872984635 0.007232457224875282 6.711622 -0.01459061270153672 -2.017379743547439
+110.0 13.707039536190742 0.008503171057776227 13.749337 -0.04229746380925903 -4.974316466393748
+120.0 22.084724092134376 0.011642487412576938 22.143307 -0.05858290786562392 -5.031820588643199

@@ -1,0 +1,16 @@
+# QuantLib 1.44 C++ FdSabrVanillaEngine, American, F0 100, alpha 2, beta 0.5, rho -0.7, nu 0.8, T 0.25, rate 0.05. 400 forward points, 50 volatility points, 64 time steps, other settings QuantLib's defaults. 3.04044 s for 14 prices.
+# rate type K quantlib_american
+0.05 put 50 0.000000
+0.05 put 75 0.125429
+0.05 put 95 2.155425
+0.05 put 100 3.946525
+0.05 put 105 6.724805
+0.05 put 125 25.000000
+0.05 put 200 100.000000
+0.05 call 50 50.000000
+0.05 call 75 25.029678
+0.05 call 95 7.111242
+0.05 call 100 3.946506
+0.05 call 105 1.768691
+0.05 call 125 0.003051
+0.05 call 200 0.000000
