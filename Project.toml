@@ -3,7 +3,7 @@ uuid = "c3f83b8a-3cc9-4a74-b44c-79f892b0a5a4"
 license = "MIT"
 version = "0.1.0"
 authors = ["Antonio Saragga Seabra"]
-description = "Estimation and modeling of volatility using realized measures in Julia."
+description = "Stochastic volatility models for Julia: simulation and European and American pricing under Heston, Bates and SABR."
 
 [deps]
 ADTypes = "47edcb42-4c32-4615-8424-f2b9edc5f35b"
