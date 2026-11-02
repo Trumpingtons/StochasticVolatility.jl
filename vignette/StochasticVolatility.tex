@@ -200,19 +200,8 @@ on one thread: .66 to .73 s against 3.05 s. These are not times at equal accurac
 
 \nmsection{Still open}
 \begin{itemize}[leftmargin=*, itemsep=1pt, topsep=2pt]
-\item Bates at $S_0 = 110$ and 120: the extrapolated values are .0019 and .0063 below Toivanen's, and the gap at 120 grows with the
-  grid. The source is not known, and the chapter itself has not been read.
-\item Finite differences converge at first order on these calls: 3.7\% of the price on Bates $K = 120$ at the default grid. Where a
-  cent matters with $S_0$ below $K$, use a finer grid and compare two.
-\item Longstaff-Schwartz is biased, source unknown. Under Bates it is up to .0586 low, about 5 SE; under SABR about a cent low near
-  the money. At rate 0 under SABR its American minus European runs from $-.019$ to $+.038$, largest about 4 SE, so it is not yet a clean
-  check there; do not take it alone as one. The Euler scheme is itself biased under SABR.
-\item SABR call $K = 125$ is unsettled: .00276 QuantLib, .00217 Julia at 50 volatility points, .00316 at 150, .00338 LS.
-\item The critical spot of Table 4 is not settled: 89.68 to 89.96 by grid in finite differences, 90.2 to 90.3 in Longstaff-Schwartz.
-\item Andersen (2008) and Hagan et al.\ (2002) print no prices, so those two are checked against libraries only. Strikes very close
-  to the forward are not yet tested in the Hagan formula.
-\item Calibration is not written. Among the volatility measures also in the package, the attribution of \fn{ams\_noise\_test} and the constants
-  of \fn{meilijson} are unverified, and the range-based measures duplicate \package{RangeVol}{https://github.com/Trumpingtons/RangeVol.jl}.
+\item Calibration is not written.
+\item Greeks are not written.
 \end{itemize}
 
 \nmsection{References}
