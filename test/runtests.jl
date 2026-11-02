@@ -439,6 +439,106 @@ zscore(x, exact) = abs(mean(x) - exact) / (std(x) / sqrt(length(x)))
         @test largest[60.0] < 0.01
     end
 
+    @testset "Finite differences" begin
+        @testset "American puts under Heston against the published values" begin
+            rows = [parse.(Float64, split(line)) for line in eachline(joinpath(@__DIR__, "finite_difference_heston_published.txt")) if !startswith(line, "#")]
+            prices = map(rows) do row
+                S0, v0, kappa, theta, xi, rho, rate, T, K, price_points, variance_points, steps = row
+                model = Heston(S0, v0, rate, kappa, theta, xi, rho)
+                return finite_difference_price(model, K, T; rate, call = false, price_points = Int(price_points), variance_points = Int(variance_points), steps = Int(steps))
+            end
+            # Within a cent of the exercise value the surface has a kink, and a published price can lie below that value (9.9984 at S0 90).
+            at_kink = [abs(row[13] - (row[9] - row[1])) < 0.01 for row in rows]
+            gaps = abs.(prices .- getindex.(rows, 13))
+            # The published values have 4 decimals.
+            @test maximum(gaps[.!at_kink]) <= 5.0e-5
+            @test maximum(gaps[at_kink]) < 0.002
+        end
+
+        @testset "American calls under Bates against Toivanen (2010), quoted by Salmi, Toivanen and von Sydow (2013)" begin
+            published = [80.0 => 0.328526, 90.0 => 2.109397, 100.0 => 6.711622, 110.0 => 13.749337, 120.0 => 22.143307]
+            gaps = map(published) do (S0, price)
+                model = Bates(S0 = S0, v0 = 0.04, mu = -0.02, kappa = 2, theta = 0.04, xi = 0.25, rho = -0.5, lambda = 0.2, muJ = -0.58, deltaJ = 0.4)
+                return abs(finite_difference_price(model, 100, 0.5; rate = 0.03, call = true, price_points = 600, variance_points = 300, steps = 150) - price)
+            end
+            # Not smaller: the gap at S0 120 grows with the grid, and its source is not known.
+            @test maximum(gaps) < 0.007
+        end
+
+        @testset "American prices under SABR against QuantLib" begin
+            rows = [split(line) for line in eachline(joinpath(@__DIR__, "finite_difference_sabr_quantlib.txt")) if !startswith(line, "#")]
+            model = SABR(100.0, 2.0, 0.5, -0.7, 0.8)
+            gaps = map(rows) do (rate, type, K, quantlib)
+                price = finite_difference_price(model, parse(Float64, K), 0.25; rate = parse(Float64, rate), call = type == "call", price_points = 400, volatility_points = 50, steps = 64)
+                return abs(price - parse(Float64, quantlib))
+            end
+            @test maximum(gaps) < 0.001
+        end
+
+        # Never exercised early, so the price tends to the European one, from above, with a gap that halves with the grid.
+        @testset "American call with no dividend against the closed form, $(nameof(typeof(model)))" for (model, tolerance) in (
+            (Heston(S0 = 100, v0 = 0.04, mu = 0.05, kappa = 2, theta = 0.04, xi = 0.3, rho = -0.7), 0.014),
+            (Bates(S0 = 100, v0 = 0.04, mu = 0.05, kappa = 2, theta = 0.04, xi = 0.3, rho = -0.7, lambda = 0.2, muJ = -0.58, deltaJ = 0.4), 0.043),
+        )
+            strikes = [80.0, 100.0, 120.0]
+            @test maximum(abs.(finite_difference_price(model, strikes, 0.5; rate = 0.05, call = true) .- european_price.(Ref(model), strikes, 0.5; rate = 0.05))) < tolerance
+        end
+
+        @testset "Bates without jumps is Heston" begin
+            heston = Heston(S0 = 100, v0 = 0.04, mu = 0.03, kappa = 2, theta = 0.04, xi = 0.3, rho = -0.7)
+            grid = (; price_points = 100, variance_points = 50, steps = 25)
+            @test finite_difference_price(Bates(heston, 0, -0.1, 0.2), 100, 0.5; rate = 0.03, call = false, grid...) == finite_difference_price(heston, 100, 0.5; rate = 0.03, call = false, grid...)
+        end
+
+        @testset "European prices under SABR" begin
+            model = SABR(100.0, 2.0, 0.5, -0.7, 0.8)
+            grid = (; price_points = 400, volatility_points = 50, steps = 64)
+            strikes = [75.0, 100.0, 125.0]
+            calls = finite_difference_price(model, strikes, 0.25; rate = 0.05, american = false, grid...)
+            puts = finite_difference_price(model, strikes, 0.25; rate = 0.05, call = false, american = false, grid...)
+            @test maximum(abs.(calls .- puts .- exp(-0.05 * 0.25) .* (100 .- strikes))) < 1.0e-10
+
+            # At rate 0 early exercise is worth nothing.
+            american = finite_difference_price(model, strikes, 0.25; rate = 0.0, call = false, grid...)
+            european = finite_difference_price(model, strikes, 0.25; rate = 0.0, call = false, american = false, grid...)
+            @test maximum(abs.(american .- european)) < 1.0e-4
+
+            # Almost constant volatility: the exact Bachelier and Black prices.
+            limits = [(85.0, 15.103094, 15.012849), (100.0, 3.939865, 3.938224), (125.0, 0.019792, 0.049273)]
+            gaps = map(limits) do (K, bachelier, black)
+                arguments = (; rate = 0.05, american = false, price_points = 300, volatility_points = 150, steps = 75)
+                return max(
+                    abs(finite_difference_price(SABR(100.0, 20.0, 0.0, -0.7, 0.001), K, 0.25; arguments...) - bachelier),
+                    abs(finite_difference_price(SABR(100.0, 0.2, 1.0, -0.7, 0.001), K, 0.25; arguments...) - black),
+                )
+            end
+            @test maximum(gaps) < 0.0005
+        end
+
+        @testset "A vector of strikes gives the price of each" begin
+            model = SABR(100.0, 2.0, 0.5, -0.7, 0.8)
+            grid = (; rate = 0.05, price_points = 100, volatility_points = 25, steps = 16)
+            @test finite_difference_price(model, [95.0, 105.0], 0.25; grid...) == [finite_difference_price(model, K, 0.25; grid...) for K in (95.0, 105.0)]
+        end
+
+        @testset "Input validation" begin
+            heston = Heston(S0 = 100, v0 = 0.04, mu = 0.03, kappa = 2, theta = 0.04, xi = 0.3, rho = -0.7)
+            sabr = SABR(100.0, 2.0, 0.5, -0.7, 0.8)
+            @testset "$(nameof(typeof(model)))" for model in (heston, sabr)
+                @test_throws DomainError finite_difference_price(model, 0.0, 0.5; rate = 0.03)
+                @test_throws DomainError finite_difference_price(model, 100.0, 0.0; rate = 0.03)
+                @test_throws ArgumentError finite_difference_price(model, 100.0, 0.5; rate = 0.03, price_points = 3)
+                @test_throws ArgumentError finite_difference_price(model, 100.0, 0.5; rate = 0.03, steps = 0)
+            end
+            @test_throws ArgumentError finite_difference_price(heston, 100.0, 0.5; rate = 0.03, variance_points = 3)
+            @test_throws DomainError finite_difference_price(Heston(S0 = 100, v0 = 6, mu = 0.03, kappa = 2, theta = 0.04, xi = 0.3, rho = -0.7), 100.0, 0.5; rate = 0.03)
+            @test_throws DomainError finite_difference_price(heston, 1.0, 0.5; rate = 0.03)
+            @test_throws ArgumentError finite_difference_price(Bates(heston, 0.2, -0.1, 0.0), 100.0, 0.5; rate = 0.03)
+            @test_throws ArgumentError finite_difference_price(sabr, 100.0, 0.5; rate = 0.03, volatility_points = 3)
+            @test_throws DomainError finite_difference_price(SABR(100.0, 2.0, 0.5, -0.7, 0.0), 100.0, 0.5; rate = 0.03)
+        end
+    end
+
     @testset "Input validation" begin
         @test_throws ArgumentError realized_variance(Float64[])
         @test_throws ArgumentError realized_volatility(Float64[])
