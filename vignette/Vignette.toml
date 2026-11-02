@@ -1,0 +1,13 @@
+# The vignette of StochasticVolatility.jl, shown in Package Vignettes once the package is installed.
+article = ""
+author = "Antonio Saragga Seabra"
+citation = ""
+description = "Simulation and European and American prices under Heston, Bates and SABR, checked against published values, QuantLib and NMOF."
+license = "MIT"
+method = "Heston, Bates and SABR: simulation, closed forms, the Hagan formula, Longstaff-Schwartz and finite differences (MCS-IT)"
+package = "StochasticVolatility"
+pdf = "StochasticVolatility.pdf"
+repository = "https://github.com/Trumpingtons/StochasticVolatility.jl"
+title = "StochasticVolatility: Heston, Bates and SABR in Julia"
+topic = "Volatility"
+version = "0.1.0"

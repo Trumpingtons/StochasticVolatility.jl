@@ -29,6 +29,7 @@ QuasiRandom
 european_price
 monte_carlo_price
 longstaff_schwartz_price
+finite_difference_price
 hagan_implied_vol
 hagan_price
 ```

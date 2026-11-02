@@ -1,0 +1,234 @@
+% Pollis Domain Packages: StochasticVolatility.jl
+% Compile from this folder with: julia -e 'using PollisTeX; display(compile("StochasticVolatility.tex"))'
+% The values come from values.jl, whose output is in ../benchmark/vignette_values.txt, and from the stored files of ../benchmark named in the text.
+\input{vignette_style}
+
+% A package Pollis needs for a panel of its own, not one that reproduces a paper: its own header, key facts and credit
+\renewcommand{\vignetteauthor}{Antonio Saragga Seabra}
+\renewcommand{\vignettedate}{2 November 2026}
+\renewcommand{\vignettelicense}{MIT}
+\fancyfoot[L]{\footnotesize\color{soft}\textbf{Pollis}\enspace Domain Packages\enspace·\enspace\nmtheme}
+\renewcommand{\nmhead}[3]{%
+  \renewcommand{\nmtheme}{#1}%
+  \thispagestyle{fancy}%
+  \begin{minipage}[c]{13mm}\pollislogo{11mm}\end{minipage}%
+  \begin{minipage}[c]{\dimexpr\linewidth-13mm\relax}
+    {\color{navy}\Large\bfseries Pollis}\enspace{\color{soft}Domain Packages}\hfill
+    {\color{deepamber}\small\bfseries\MakeUppercase{#1}}
+  \end{minipage}\par\vspace{7mm}
+  {\color{navy}\fontsize{22}{26}\selectfont\bfseries #2}\par\vspace{4pt}
+  {\color{soft}\large #3}\par\vspace{5mm}}
+\renewcommand{\factsheet}[4]{%
+  \begin{tcolorbox}[enhanced, colback=pale, colframe=pale, boxrule=0pt, sharp corners,
+    left=7pt, right=7pt, top=5pt, bottom=5pt, fontupper=\small]
+  \begin{tabularx}{\linewidth}{@{}>{\leavevmode\bfseries\color{navy}}p{27mm}>{\leavevmode}X@{}}
+  In Pollis & #1\\
+  Missing in Julia & #2\\
+  Package & #3\\
+  Tests & #4
+  \end{tabularx}
+  \end{tcolorbox}}
+\renewcommand{\nmcredit}{%
+  \par\vfill
+  \begin{minipage}[b]{0.78\linewidth}\footnotesize\color{soft}
+  Package written and tested with Claude Code (Anthropic) in Pollis.\par
+  \textcopyright\ 2026 \vignetteauthor\enspace·\enspace Licensed under \vignettelicense\enspace·\enspace\vignettedate
+  \end{minipage}\hfill
+  \begin{minipage}[b]{0.18\linewidth}\raggedleft\pollislogo{9mm}\par\vspace{2pt}{\footnotesize contact@pollis.org}\end{minipage}}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+
+\begin{document}
+\emergencystretch=3em
+
+\nmhead{Volatility}
+  {StochasticVolatility: Heston, Bates and SABR in Julia}
+  {Simulation, European prices and American prices, by two American engines that check each other, set beside
+   published values and other libraries.}
+
+\factsheet
+  {Written to power the \emph{Continuous-Time Stochastic Volatility Models} panel of the Finance Toolbox. The panel
+   does not call it yet.}
+  {American prices under Bates and SABR. Of the packages read: DiffEqFinancial 2.11.0 has a Heston SDE and moments, no
+   prices; Hedgehog 0.1.0 is Heston only, with no dividend yield (read from its source, not run); ArbitrageFreeSABR
+   1.0.0 has the arbitrage-free SABR PDE, not the 2002 formula; QuantLib.jl 0.1.1 does not install on Julia 1.13, and
+   its \fn{BatesEngine} at commit fe98714 has \fn{expm1(nu * delta2)} where the C++ has \fn{exp(nu + delta2) - 1}.}
+  {\package{StochasticVolatility}{https://github.com/Trumpingtons/StochasticVolatility.jl} 0.1.0, MIT:\newline
+   \fn{Pkg.Registry.add(url = "https://github.com/Trumpingtons/PollisRegistry.git")}\newline \fn{Pkg.add("StochasticVolatility")}}
+  {\fn{test/runtests.jl} runs on Julia 1.10 and the latest 1.x at every push. Of 39 published American puts under
+   Heston, 36 to every printed digit. Of 5 American calls under Bates, 3 agree and 2 are open. Of 14 American options
+   under SABR, all within .00097 of QuantLib.}
+
+\nmsection{Why a package}
+The panel's procedures are hand-written loops, with no American price. American options have no closed form, so one
+engine alone cannot show that it is right. The package has two: least squares on
+simulated paths (\nmcite{ls2001}{Longstaff and Schwartz, 2001}) and finite differences on the pricing equation.
+
+\nmsection{What it computes}
+\fn{Heston}: $dS = \mu S\,dt + \sqrt{v}\,S\,dW_1$, $dv = \kappa(\theta - v)\,dt + \xi\sqrt{v}\,dW_2$, $d\langle W_1, W_2\rangle = \rho\,dt$
+(\nmcite{heston1993}{Heston, 1993}). \fn{Bates} adds compensated log-normal jumps of intensity $\lambda$, with log size
+of mean $\mu_J$ and deviation $\delta_J$ (\nmcite{bates1996}{Bates, 1996}). \fn{SABR}: $dF = \sigma F^\beta\,dW_1$,
+$d\sigma = \nu\sigma\,dW_2$, $\sigma_0 = \alpha$ (\nmcite{hagan2002}{Hagan et al., 2002}). The drift $\mu$ is the rate less
+the dividend yield.
+
+\nmsub{Simulation}
+\fn{simulate} and \fn{simulate\_terminal} with \fn{QuadraticExponential()} (\nmcite{andersen2008}{Andersen, 2008}),
+\fn{FullTruncation()} (\nmcite{lord2010}{Lord et al., 2010}) or \fn{Euler()}, on \fn{PseudoRandom} or \fn{QuasiRandom} numbers:
+scrambled Sobol with a Brownian bridge, and for Bates the jump bridge of \nmcite{baldeaux2012}{Baldeaux and Roberts (2012)}.
+
+\nmsub{European prices}
+\fn{european\_price}, the closed forms of Heston and Bates; \fn{hagan\_implied\_vol} and \fn{hagan\_price}, the formula of
+Hagan et al., an approximation; \fn{monte\_carlo\_price}, a vector of strikes from one simulation.
+
+\nmsub{American prices}
+\fn{longstaff\_schwartz\_price} exercises at the simulation's steps, so it is Bermudan with as many dates.
+By finite differences, \fn{finite\_difference\_price} is the MCS-IT scheme of \nmcite{hh2015}{Haentjens and in 't Hout (2015)}: modified
+Craig-Sneyd ADI with $\theta = 1/3$ and the Ikonen-Toivanen step (\nmcite{it2009}{Ikonen and Toivanen, 2009}) for early
+exercise, on nonuniform meshes with first-order upwind convection. For Bates the jump integral is explicit, exact on each
+mesh interval under the log-normal jump. For SABR it works in $F$ and $\log\sigma$ with central differences, and
+\fn{american = false} gives the European price. The default grid is 300 prices, 150 variances (or volatilities) and 75 steps.
+
+\nmsection{A worked example}
+\begin{footnotesize}
+\begin{verbatim}
+using StochasticVolatility
+model = Heston(S0 = 10, v0 = 0.0625, mu = 0.1, kappa = 5, theta = 0.16, xi = 0.9, rho = 0.1)
+finite_difference_price(model, 10, 0.25; rate = 0.1, call = false)   # 0.5204, American
+european_price(model, 10, 0.25; rate = 0.1, call = false)            # 0.5015, European
+sabr = SABR(100.0, 2.0, 0.5, -0.7, 0.8)                              # F0, alpha, beta, rho, nu
+finite_difference_price(sabr, 100, 0.25; rate = 0.05, call = false)  # 3.9466, American
+hagan_price(sabr, 100, 0.25; rate = 0.05, call = false)              # 3.9388, European
+\end{verbatim}
+\end{footnotesize}
+
+\newpage
+\nmsection{What the tests show: American puts under Heston, against the published MCS-IT}
+From \nmcite{hh2015}{Haentjens and in 't Hout (2015)}, $K = 10$, $T = .25$ in Tables 2 and 3 and $K = 100$, $T = .25$ in Table 4. The
+rows show the finest grid of each table; the tests compare all 39 values, on the same method and grids.
+
+\begin{valuetable}{@{}l l *{5}{R} c@{}}
+Source and grid & $S_0$ & 8 & 9 & 10 & 11 & 12 & \\ \midrule
+Table 2, $v_0 = .0625$ & published & 2.0000 & 1.1081 & .5204 & .2143 & .0827 & \\
+300 $\times$ 150 $\times$ 75 & Julia & 2.0000 & 1.1081 & .5204 & .2143 & .0827 & \ok \\ \midrule
+Table 3, $v_0 = .25$ & published & 2.0788 & 1.3339 & .7962 & .4486 & .2433 & \\
+300 $\times$ 150 $\times$ 75 & Julia & 2.0788 & 1.3339 & .7962 & .4486 & .2433 & \ok \\ \midrule
+ & $S_0$ & 90 & 100 & 110 & & & \\ \midrule
+Table 4, $v_0 = .0348$ & published & 10.0039 & 3.2126 & .9305 & & & \\
+300 $\times$ 150 $\times$ 60 & Julia & 10.0039 & 3.2126 & .9305 & & & \ok \\
+\end{valuetable}
+
+\medskip
+\noindent\textbf{Where they differ.} 36 of 39 agree to every printed digit, the 3 others at the exercise boundary, with
+few steps or points. $S_0 = 8$ at 100 $\times$ 50 $\times$ 25: published 2.0001, Julia 2.0000, off by 1 in the fourth decimal.
+$S_0 = 90$ at 20 steps: published 9.9984, Julia 10.0000, off by 16; the published value is below the exercise value 10.
+$S_0 = 90$ at 40 steps: published 10.0015, Julia 10.0020, off by 5. Of the 33 values not within a cent of the exercise
+value, the furthest is $4.9\times10^{-5}$ away, under half of the last digit printed.
+
+\nmsub{American calls under Bates: 2 of 5 open}
+$K = 100$, $T = .5$, rate .03, dividend yield .05, $v_0 = \theta = .04$, $\kappa = 2$, $\xi = .25$, $\rho = -.5$, $\lambda = .2$, $\mu_J = -.58$,
+$\delta_J = .4$. Published: \nmcite{toivanen2010}{Toivanen (2010)} on a grid of 4096 $\times$ 2048 $\times$ 514, read second-hand from
+\nmcite{salmi2013}{Salmi, Toivanen and von Sydow (2013)}. The last column is the value extrapolated from the two grids of
+Julia, $2V_{1200} - V_{600}$, minus the published one. The 1200 grid, QuantLib 1.44 and Longstaff-Schwartz are stored in
+\fn{benchmark/}, not recomputed here.
+
+\begin{valuetable}{@{}c *{5}{R} r c@{}}
+$S_0$ & Published & Julia 600 $\times$ 300 $\times$ 150 & Julia 1200 $\times$ 600 $\times$ 300 & QuantLib 100 $\times$ 100 $\times$ 50 & LS, 98304 paths, 126 steps (SE) & Extrap. $-$ publ. & \\ \midrule
+80 & .328526 & .332788 & .330687 & .331071 & .33142 (.00174) & +.0001 & \ok \\
+90 & 2.109397 & 2.115783 & 2.112723 & 2.108276 & 2.09304 (.00330) & +.0003 & \ok \\
+100 & 6.711622 & 6.715916 & 6.713882 & 6.714004 & 6.69703 (.00723) & +.0002 & \ok \\
+110 & 13.749337 & 13.749886 & 13.748658 & 13.759956 & 13.70704 (.00850) & $-$.0019 & \no \\
+120 & 22.143307 & 22.138758 & 22.137875 & 22.153021 & 22.08472 (.01164) & $-$.0063 & \no \\
+\end{valuetable}
+
+\medskip
+\nmsub{American options under SABR, against QuantLib}
+$F_0 = 100$, $\alpha = 2$, $\beta = .5$, $\rho = -.7$, $\nu = .8$, $T = .25$, rate .05. QuantLib 1.44 \fn{FdSabrVanillaEngine} and Julia at
+400 $\times$ 50 $\times$ 64, the largest gap .00097 at call $K = 75$. LS (stored, with SE): 131072 quasi-random paths, 64 steps.
+
+\begin{valuetable}{@{}c *{6}{R}@{}}
+$K$ & Put, QuantLib & Put, Julia & Put, LS & Call, QuantLib & Call, Julia & Call, LS \\ \midrule
+50 & .00244 & .00251 & .00271 (.00029) & 50 & 50 & 50 \\
+75 & .12580 & .12598 & .12513 (.00068) & 25.02978 & 25.03075 & 25.03815 (.00490) \\
+95 & 2.15536 & 2.15524 & 2.14291 (.00275) & 7.11113 & 7.11123 & 7.10076 (.00475) \\
+100 & 3.94654 & 3.94666 & 3.93968 (.00368) & 3.94646 & 3.94650 & 3.94508 (.00264) \\
+105 & 6.72499 & 6.72566 & 6.71495 (.00508) & 1.76876 & 1.76890 & 1.77113 (.00222) \\
+125 & 25 & 25 & 25 & .00276 & .00217 & .00338 (.00015) \\
+200 & 100 & 100 & 100 & 0 & 0 & 0 \\
+\end{valuetable}
+
+\medskip
+\nmsub{Cases with a known answer}
+An American call with no dividend is never exercised early, so it must tend to the closed form. The gap below halves as
+the grid doubles: first order, largest for $S_0$ below $K$. $S_0 = 100$, $v_0 = \theta = .04$, rate .05, $T = .5$, $\kappa = 2$, $\xi = .3$, $\rho = -.7$;
+Bates with $\lambda = .2$, $\mu_J = -.58$, $\delta_J = .4$ (\fn{benchmark/finite\_difference\_no\_dividend\_call.txt}).
+
+\begin{valuetable}{@{}l c *{4}{R}@{}}
+Model & $K$ & Closed form & Gap at 300 $\times$ 150 $\times$ 75 & at 600 $\times$ 300 $\times$ 150 & at 1200 $\times$ 600 $\times$ 300 \\ \midrule
+Heston & 80 & 22.436161 & .001693 & .000861 & .000434 \\
+Heston & 100 & 6.837200 & .006962 & .003546 & .001789 \\
+Heston & 120 & .504430 & .013094 & .006700 & .003388 \\
+Bates & 80 & 24.325572 & .003762 & .001886 & \\
+Bates & 100 & 8.960508 & .016100 & .008099 & \\
+Bates & 120 & 1.147607 & .042395 & .021430 & \\
+\end{valuetable}
+
+\medskip
+\noindent Under SABR at the 400 $\times$ 50 $\times$ 64 grid, American minus European at rate 0 is $3.8\times10^{-9}$, $1.2\times10^{-6}$ and
+$6.7\times10^{-5}$ at $K = 75$, 100 and 125, and put-call parity holds to about $10^{-13}$. At $\nu = .001$, $K = 100$, Julia gives 3.939869
+with $\beta = 0$ against Bachelier's 3.939865, and 3.938194 with $\beta = 1$ against Black's 3.938224. Longstaff-Schwartz under
+Heston (131072 quasi-random paths) is within .005 of the published values at 64 dates, and within .01 of the published
+Bermudan values at 60.
+
+\nmsub{European prices and simulation}
+\begin{valuetable}{@{}l r l l c@{}}
+Function & Rows & Against & Largest difference & \\ \midrule
+\fn{european\_price}, Heston & 189 & QuantLib 1.44 / NMOF 2.12.0 & $2.8\times10^{-12}$ / $9.0\times10^{-7}$ & \ok \\
+\fn{european\_price}, Bates & 540 & QuantLib, 324 rows with $\xi < 1$ / NMOF & $1.4\times10^{-8}$ / $1.1\times10^{-6}$ & \ok \\
+\fn{hagan\_implied\_vol}, \fn{hagan\_price} & 756 & QuantLib 1.44 & $1.5\times10^{-14}$, relative & \ok \\
+\end{valuetable}
+
+\medskip
+\noindent QuantLib's \fn{BatesEngine} has not converged at $\xi \ge 1$, so there only NMOF is used. On one file of Sobol numbers,
+16 replicates of $2^{13}$ paths and 64 steps, the paths agree with QuantLib to $9.1\times10^{-12}$ or closer, at 4.5 against 27.0 µs per path for
+Heston and 6.0 to 6.2 against 30.2 for Bates. QuantLib has no SABR process, so its side is written by hand on its generator: 4.5 to 4.6
+against 4.0 µs per path, with Euler. \fn{QuasiRandom} narrows the spread of replicate means 12 to 21 times for Heston and SABR calls, and 2.8
+to 5.0 times for Bates calls.
+
+\medskip
+\noindent One call price, in µs: Julia 155.1 (Heston) and 176.8 (Bates), \fn{rtol} $10^{-12}$; QuantLib C++ with Laguerre order 192, 1907.0 and
+1947.4, and adaptive $10^{-13}$, 678.8 for Heston; NMOF 1460.3 and 1763.0. \fn{hagan\_price}: .164 against .104. The 14 SABR options
+on one thread: .66 to .73 s against 3.05 s. These are not times at equal accuracy.
+
+\nmsection{Still open}
+\begin{itemize}[leftmargin=*, itemsep=1pt, topsep=2pt]
+\item Bates at $S_0 = 110$ and 120: the extrapolated values are .0019 and .0063 below Toivanen's, and the gap at 120 grows with the
+  grid. The source is not known, and the chapter itself has not been read.
+\item Finite differences converge at first order on these calls: 3.7\% of the price on Bates $K = 120$ at the default grid. Where a
+  cent matters with $S_0$ below $K$, use a finer grid and compare two.
+\item Longstaff-Schwartz is biased, source unknown. Under Bates it is up to .0586 low, about 5 SE; under SABR about a cent low near
+  the money. At rate 0 under SABR its American minus European runs from $-.019$ to $+.038$, largest about 4 SE, so it is not yet a clean
+  check there; do not take it alone as one. The Euler scheme is itself biased under SABR.
+\item SABR call $K = 125$ is unsettled: .00276 QuantLib, .00217 Julia at 50 volatility points, .00316 at 150, .00338 LS.
+\item The critical spot of Table 4 is not settled: 89.68 to 89.96 by grid in finite differences, 90.2 to 90.3 in Longstaff-Schwartz.
+\item Andersen (2008) and Hagan et al.\ (2002) print no prices, so those two are checked against libraries only. Strikes very close
+  to the forward are not yet tested in the Hagan formula.
+\item Calibration is not written. Among the volatility measures also in the package, the attribution of \fn{ams\_noise\_test} and the constants
+  of \fn{meilijson} are unverified, and the range-based measures duplicate \package{RangeVol}{https://github.com/Trumpingtons/RangeVol.jl}.
+\end{itemize}
+
+\nmsection{References}
+{\footnotesize\raggedright\setlength{\parskip}{1pt}
+\nmref{hh2015}{Haentjens, T. and in 't Hout, K. J. (2015). ADI schemes for pricing American options under the Heston model. \emph{Applied Mathematical Finance}, 22(3), 207--237. \nmdoi{10.1080/1350486X.2015.1009129}. Values read from arXiv:1309.0110v1.}
+\nmref{andersen2008}{Andersen, L. (2008). Simple and efficient simulation of the Heston stochastic volatility model. \emph{Journal of Computational Finance}, 11(3), 1--42. \nmdoi{10.21314/JCF.2008.189}}
+\nmref{baldeaux2012}{Baldeaux, J. and Roberts, D. (2012). Quasi-Monte Carlo methods for the Heston model. arXiv:1202.3217.}
+\nmref{bates1996}{Bates, D. S. (1996). Jumps and stochastic volatility: exchange rate processes implicit in Deutsche Mark options. \emph{Review of Financial Studies}, 9(1), 69--107. \nmdoi{10.1093/rfs/9.1.69}}
+\nmref{hagan2002}{Hagan, P. S., Kumar, D., Lesniewski, A. S. and Woodward, D. E. (2002). Managing smile risk. \emph{Wilmott Magazine}, 84--108.}
+\nmref{heston1993}{Heston, S. L. (1993). A closed-form solution for options with stochastic volatility with applications to bond and currency options. \emph{Review of Financial Studies}, 6(2), 327--343. \nmdoi{10.1093/rfs/6.2.327}}
+\nmref{it2009}{Ikonen, S. and Toivanen, J. (2009). Operator splitting methods for pricing American options under stochastic volatility. \emph{Numerische Mathematik}, 113(2), 299--324. \nmdoi{10.1007/s00211-009-0227-5}}
+\nmref{ls2001}{Longstaff, F. A. and Schwartz, E. S. (2001). Valuing American options by simulation: a simple least-squares approach. \emph{Review of Financial Studies}, 14(1), 113--147. \nmdoi{10.1093/rfs/14.1.113}}
+\nmref{lord2010}{Lord, R., Koekkoek, R. and van Dijk, D. (2010). A comparison of biased simulation schemes for stochastic volatility models. \emph{Quantitative Finance}, 10(2), 177--194. \nmdoi{10.1080/14697680802392496}}
+\nmref{salmi2013}{Salmi, S., Toivanen, J. and von Sydow, L. (2013). Iterative methods for pricing American options under the Bates model. \emph{Procedia Computer Science}, 18, 1136--1144. \nmdoi{10.1016/j.procs.2013.05.279}}
+\nmref{toivanen2010}{Toivanen, J. (2010). A componentwise splitting method for pricing American options under the Bates model. In \emph{Applied and Numerical Partial Differential Equations}, Computational Methods in Applied Sciences, Springer, 213--227. \nmdoi{10.1007/978-90-481-3239-3\_16}}
+}
+
+\nmcredit
+\end{document}

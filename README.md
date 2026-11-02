@@ -12,6 +12,8 @@
 - `european_price(model, K, T; rate, call=true)` — closed-form European prices under Heston and Bates
 - `monte_carlo_price(model, K, T; rate, call=true, paths=65536, steps=252, scheme, numbers, threaded=true)` — Monte Carlo European prices with a standard error under Heston, Bates and SABR, for one strike or a vector of strikes from one simulation
 - `longstaff_schwartz_price(model, K, T; rate, call=true, degree=3, paths=65536, steps=252, scheme, numbers, threaded=true)` — American prices by least-squares Monte Carlo with a standard error under Heston, Bates and SABR, for one strike or a vector of strikes from one simulation
+- `finite_difference_price(model, K, T; rate, call=true, price_points=300, variance_points=150, steps=75)` — American prices by finite differences (the MCS-IT scheme of Haentjens and in 't Hout, 2015) under Heston and Bates, for one strike or a vector of strikes
+- `finite_difference_price(model, K, T; rate, call=true, american=true, price_points=300, volatility_points=150, steps=75)` — the same under SABR, American or European, for one strike or a vector of strikes
 - `hagan_implied_vol(model, K, T)` and `hagan_price(model, K, T; rate, call=true)` — the approximation of Hagan et al. (2002) under SABR
 
 - `historical_volatility(close; scale=1)` — close-to-close historical volatility estimator
@@ -41,7 +43,8 @@
 
 ```julia
 using Pkg
-Pkg.add(path="/path/to/StochasticVolatility.jl")
+Pkg.Registry.add(url="https://github.com/Trumpingtons/PollisRegistry.git")
+Pkg.add("StochasticVolatility")
 ```
 
 ## Usage
